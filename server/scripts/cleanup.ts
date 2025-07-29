@@ -24,23 +24,35 @@ const cleanupDatabase = async () => {
     });
 
     const invalidUsers = allUsers.filter(user =>
-      !user.fullName ||
-      !user.mobileNumber ||
-      !user.role ||
       user.fullName === undefined ||
       user.mobileNumber === undefined ||
-      user.role === undefined ||
-      user.fullName === '' ||
-      user.mobileNumber === '' ||
-      typeof user.role === 'number' // role should not be a number
+      !user.fullName ||
+      !user.mobileNumber ||
+      user.role === '1' ||
+      user.role === '2' ||
+      user.role === '3' ||
+      (user.role !== 'admin' && user.role !== 'user')
     );
 
     console.log('Invalid users found:', invalidUsers.length);
 
     if (invalidUsers.length > 0) {
-      // Delete invalid users
-      const invalidIds = invalidUsers.map(user => user._id);
-      const result = await User.deleteMany({ _id: { $in: invalidIds } });
+      // Delete invalid users using a direct query since some might not have proper _id
+      const result = await User.deleteMany({
+        $or: [
+          { fullName: { $exists: false } },
+          { fullName: undefined },
+          { fullName: null },
+          { fullName: '' },
+          { mobileNumber: { $exists: false } },
+          { mobileNumber: undefined },
+          { mobileNumber: null },
+          { mobileNumber: '' },
+          { role: '1' },
+          { role: '2' },
+          { role: '3' }
+        ]
+      });
       console.log('✅ Deleted', result.deletedCount, 'invalid users');
     }
 
