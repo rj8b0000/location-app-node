@@ -78,23 +78,9 @@ async function seedFeedback() {
 
     // Display summary
     const totalFeedbacks = await Feedback.countDocuments();
-    const avgRating = await Feedback.aggregate([
-      { $group: { _id: null, avgRating: { $avg: '$rating' } } }
-    ]);
-    
+
     console.log(`\n📊 Feedback Summary:`);
     console.log(`Total Feedbacks: ${totalFeedbacks}`);
-    console.log(`Average Rating: ${avgRating[0]?.avgRating.toFixed(1) || 0}/5`);
-    
-    const ratingDistribution = await Feedback.aggregate([
-      { $group: { _id: '$rating', count: { $sum: 1 } } },
-      { $sort: { _id: 1 } }
-    ]);
-    
-    console.log(`\n⭐ Rating Distribution:`);
-    ratingDistribution.forEach(({ _id, count }) => {
-      console.log(`${_id} stars: ${count} feedbacks`);
-    });
 
     process.exit(0);
   } catch (error) {
