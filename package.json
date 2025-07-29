@@ -19,7 +19,8 @@
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc",
-    "seed": "tsx server/scripts/seed.ts"
+    "seed": "tsx server/scripts/seed.ts",
+    "cleanup": "tsx server/scripts/cleanup.ts"
   },
   "dependencies": {
     "dotenv": "^17.2.0",
