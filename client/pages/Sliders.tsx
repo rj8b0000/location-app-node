@@ -96,22 +96,7 @@ export default function Sliders() {
 
   // Slider functions
   const handleFileUpload = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: formData
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to upload image');
-    }
-
-    const data = await response.json();
+    const data = await api.uploadImage(file);
     return data.imageUrl;
   };
 
