@@ -12,6 +12,7 @@ import { getFeedbacks, createFeedback, deleteFeedback } from "./routes/feedback"
 import { getSettings, updateSettings, getStatisticsLink } from "./routes/settings";
 import { getUsers, createUser, updateUser, deleteUser } from "./routes/users";
 import { getDashboardStats } from "./routes/dashboard";
+import { getContents, getActiveContents, createContent, updateContent, deleteContent } from "./routes/content";
 
 export function createServer() {
   const app = express();
