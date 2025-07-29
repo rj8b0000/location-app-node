@@ -17,7 +17,13 @@ const handleResponse = async (response: Response) => {
     const errorData = await response.json().catch(() => ({ message: 'Network error' }));
     throw new ApiError(response.status, errorData.message || 'Request failed');
   }
-  return response.json();
+
+  try {
+    return await response.json();
+  } catch (error) {
+    console.error('JSON parsing error:', error);
+    throw new ApiError(500, 'Invalid response format');
+  }
 };
 
 export const api = {
