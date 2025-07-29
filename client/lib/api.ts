@@ -187,5 +187,39 @@ export const api = {
       body: JSON.stringify(settingsData)
     });
     return handleResponse(response);
+  },
+
+  // Content Management
+  async getContents() {
+    const response = await fetch(`${API_BASE}/admin/contents`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async createContent(contentData: any) {
+    const response = await fetch(`${API_BASE}/contents`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(contentData)
+    });
+    return handleResponse(response);
+  },
+
+  async updateContent(id: string, contentData: any) {
+    const response = await fetch(`${API_BASE}/contents/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(contentData)
+    });
+    return handleResponse(response);
+  },
+
+  async deleteContent(id: string) {
+    const response = await fetch(`${API_BASE}/contents/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
   }
 };
