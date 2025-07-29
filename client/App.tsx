@@ -16,6 +16,7 @@ import Coordinates from "./pages/Coordinates";
 import Sliders from "./pages/Sliders";
 import Feedback from "./pages/Feedback";
 import Settings from "./pages/Settings";
+import Test from "./pages/Test";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
