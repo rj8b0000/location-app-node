@@ -81,7 +81,7 @@ export default function Feedback() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {feedbacks.length === 0 ? (
+            {!feedbacks || feedbacks.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <MessageSquare className="mx-auto h-12 w-12 text-gray-300 mb-4" />
                 <p>No feedback found. User feedback will appear here.</p>
