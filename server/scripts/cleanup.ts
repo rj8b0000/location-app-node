@@ -10,13 +10,29 @@ const cleanupDatabase = async () => {
     const allUsers = await User.find();
     console.log('Total users found:', allUsers.length);
 
-    const invalidUsers = allUsers.filter(user => 
-      !user.fullName || 
-      !user.mobileNumber || 
+    // Log each user to see what the data looks like
+    allUsers.forEach((user, index) => {
+      console.log(`User ${index + 1}:`, {
+        id: user._id,
+        fullName: user.fullName,
+        mobileNumber: user.mobileNumber,
+        role: user.role,
+        fullNameType: typeof user.fullName,
+        mobileNumberType: typeof user.mobileNumber,
+        roleType: typeof user.role
+      });
+    });
+
+    const invalidUsers = allUsers.filter(user =>
+      !user.fullName ||
+      !user.mobileNumber ||
       !user.role ||
-      typeof user.fullName !== 'string' ||
-      typeof user.mobileNumber !== 'string' ||
-      typeof user.role !== 'string'
+      user.fullName === undefined ||
+      user.mobileNumber === undefined ||
+      user.role === undefined ||
+      user.fullName === '' ||
+      user.mobileNumber === '' ||
+      typeof user.role === 'number' // role should not be a number
     );
 
     console.log('Invalid users found:', invalidUsers.length);
