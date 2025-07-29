@@ -116,7 +116,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="lg:pl-64 lg:flex-1 lg:pl-0">
         {/* Top navigation - only shown on mobile */}
         <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 sm:px-6 lg:hidden">
           <div className="flex items-center justify-between h-16">
