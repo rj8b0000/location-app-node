@@ -37,7 +37,16 @@ export default function Users() {
   const fetchUsers = async () => {
     try {
       const data = await api.getUsers();
-      setUsers(data);
+      // Filter out any invalid user objects
+      const validUsers = data.filter((user: any) =>
+        user &&
+        user._id &&
+        user.fullName &&
+        user.mobileNumber &&
+        user.role &&
+        user.createdAt
+      );
+      setUsers(validUsers);
     } catch (error) {
       console.error('Failed to fetch users:', error);
     } finally {
