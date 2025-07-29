@@ -75,5 +75,12 @@ export function createServer() {
   app.put("/api/settings", authenticate, requireAdmin, updateSettings);
   app.get("/api/statistics-link", getStatisticsLink); // Public endpoint for app
 
+  // Content routes
+  app.get("/api/contents", getActiveContents); // Public endpoint for app
+  app.get("/api/admin/contents", authenticate, requireAdmin, getContents);
+  app.post("/api/contents", authenticate, requireAdmin, createContent);
+  app.put("/api/contents/:id", authenticate, requireAdmin, updateContent);
+  app.delete("/api/contents/:id", authenticate, requireAdmin, deleteContent);
+
   return app;
 }
