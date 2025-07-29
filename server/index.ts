@@ -86,5 +86,8 @@ export function createServer() {
   app.put("/api/contents/:id", authenticate, requireAdmin, updateContent);
   app.delete("/api/contents/:id", authenticate, requireAdmin, deleteContent);
 
+  // Upload routes
+  app.post("/api/upload", authenticate, requireAdmin, uploadImage);
+
   return app;
 }
