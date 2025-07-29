@@ -95,10 +95,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         {/* User Info - fixed at bottom */}
-        <div className="flex-shrink-0 p-4 border-t border-gray-200">
+        <div className="flex-shrink-0 p-3 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="ml-3">
+              <div>
                 <p className="text-sm font-medium text-gray-700">{user?.fullName || 'Admin User'}</p>
                 <p className="text-xs text-gray-500">{user?.role || 'admin'}</p>
               </div>
