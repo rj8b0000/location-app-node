@@ -4,6 +4,8 @@ import { User } from '../models/User';
 export const getUsers: RequestHandler = async (req, res) => {
   try {
     const users = await User.find().select('-password').sort({ createdAt: -1 });
+    console.log('Found users:', users.length);
+    console.log('Users data:', users.map(u => ({ id: u._id, name: u.fullName, mobile: u.mobileNumber, role: u.role })));
     res.json(users);
   } catch (error) {
     console.error('Get users error:', error);
