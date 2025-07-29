@@ -70,8 +70,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Navigation - takes remaining space */}
-        <nav className="flex-1 mt-6 px-4 overflow-y-auto">
-          <div className="space-y-2">
+        <nav className="flex-1 mt-2 px-2 overflow-y-auto">
+          <div className="space-y-1">
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   key={item.name}
                   to={item.href}
                   className={cn(
-                    "flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                     isActive
                       ? "bg-purple-100 text-purple-700"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
