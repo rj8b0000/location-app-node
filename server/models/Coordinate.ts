@@ -43,4 +43,4 @@ const coordinateSchema = new Schema<ICoordinate>({
 
 coordinateSchema.index({ polygon: '2dsphere' });
 
-export const Coordinate = mongoose.model<ICoordinate>('Coordinate', coordinateSchema);
+export const Coordinate = mongoose.models.Coordinate || mongoose.model<ICoordinate>('Coordinate', coordinateSchema);
