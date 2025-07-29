@@ -69,7 +69,7 @@ export default function Feedback() {
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Feedback Management</h1>
           <div className="text-sm text-gray-500">
-            Total: {feedbacks.length} feedback entries
+            Total: {feedbacks?.length || 0} feedback entries
           </div>
         </div>
 
