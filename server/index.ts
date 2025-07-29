@@ -13,6 +13,7 @@ import { getSettings, updateSettings, getStatisticsLink } from "./routes/setting
 import { getUsers, createUser, updateUser, deleteUser } from "./routes/users";
 import { getDashboardStats } from "./routes/dashboard";
 import { getContents, getActiveContents, createContent, updateContent, deleteContent } from "./routes/content";
+import { uploadImage } from "./routes/upload";
 
 export function createServer() {
   const app = express();
