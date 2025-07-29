@@ -252,22 +252,22 @@ export default function Users() {
                         <TableCell>
                           <div className="flex items-center">
                             <User className="mr-2 h-4 w-4 text-gray-400" />
-                            <span className="font-medium">{user.fullName}</span>
+                            <span className="font-medium">{user.fullName || 'Unknown'}</span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center">
                             <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                            {user.mobileNumber}
+                            {user.mobileNumber || 'N/A'}
                           </div>
                         </TableCell>
                         <TableCell>
                           <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                            {user.role}
+                            {user.role || 'user'}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {new Date(user.createdAt).toLocaleDateString()}
+                          {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
