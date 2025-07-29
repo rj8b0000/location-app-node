@@ -114,9 +114,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* Main content */}
       <div className="lg:pl-64">
-        {/* Top navigation */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        {/* Top navigation - compact on desktop, normal on mobile */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 lg:border-b-0">
+          <div className="flex items-center justify-between h-16 lg:h-4 lg:py-2">
             <Button
               variant="ghost"
               size="sm"
@@ -130,7 +130,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8">
+        <main className="p-4 sm:p-6 lg:p-4 lg:pt-2">
           {children}
         </main>
       </div>
