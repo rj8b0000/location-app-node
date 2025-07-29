@@ -1,0 +1,858 @@
+{
+  "info": {
+    "name": "Geo-Fencing Admin Panel API",
+    "description": "Complete API collection for the Geo-Fencing Location Detection App Admin Panel. Includes authentication, user management, coordinate management, slider management, feedback management, content management, and file upload endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string",
+      "description": "Base URL for the API"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT token obtained from login"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"mobileNumber\": \"1234567890\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Register a new user account"
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const response = pm.response.json();",
+                  "  pm.collectionVariables.set('authToken', response.token);",
+                  "  console.log('Token saved:', response.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mobileNumber\": \"1234567890\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Login with existing credentials and get JWT token"
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "profile"]
+            },
+            "description": "Get current user profile information"
+          },
+          "response": []
+        }
+      ],
+      "description": "Authentication endpoints for user registration, login, and profile management"
+    },
+    {
+      "name": "📊 Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "stats"]
+            },
+            "description": "Get dashboard statistics including total users, coordinates, sliders, and feedbacks"
+          },
+          "response": []
+        }
+      ],
+      "description": "Dashboard analytics and statistics endpoints"
+    },
+    {
+      "name": "👥 User Management",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Get all users (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Smith\",\n  \"mobileNumber\": \"9876543210\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Create a new user (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Smith Updated\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            },
+            "description": "Update user information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/:userId",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", ":userId"],
+              "variable": [
+                {
+                  "key": "userId",
+                  "value": "USER_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete a user (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "User management endpoints for CRUD operations"
+    },
+    {
+      "name": "📍 Coordinate Management",
+      "item": [
+        {
+          "name": "Get All Coordinates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/coordinates",
+              "host": ["{{baseUrl}}"],
+              "path": ["coordinates"]
+            },
+            "description": "Get all coordinates/polygons (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Coordinate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Downtown Office\",\n  \"coordinates\": [\n    [77.5946, 12.9716],\n    [77.5950, 12.9716],\n    [77.5950, 12.9720],\n    [77.5946, 12.9720],\n    [77.5946, 12.9716]\n  ],\n  \"description\": \"Main office building perimeter\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/coordinates",
+              "host": ["{{baseUrl}}"],
+              "path": ["coordinates"]
+            },
+            "description": "Create a new coordinate polygon (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Coordinate",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Office Area\",\n  \"description\": \"Updated description for office perimeter\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/coordinates/:coordinateId",
+              "host": ["{{baseUrl}}"],
+              "path": ["coordinates", ":coordinateId"],
+              "variable": [
+                {
+                  "key": "coordinateId",
+                  "value": "COORDINATE_ID_HERE"
+                }
+              ]
+            },
+            "description": "Update coordinate information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Coordinate",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/coordinates/:coordinateId",
+              "host": ["{{baseUrl}}"],
+              "path": ["coordinates", ":coordinateId"],
+              "variable": [
+                {
+                  "key": "coordinateId",
+                  "value": "COORDINATE_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete a coordinate polygon (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Location in Polygon",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 12.9718,\n  \"longitude\": 77.5948\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/coordinates/check",
+              "host": ["{{baseUrl}}"],
+              "path": ["coordinates", "check"]
+            },
+            "description": "Check if a location point is inside any polygon"
+          },
+          "response": []
+        }
+      ],
+      "description": "Coordinate and geo-fencing polygon management endpoints"
+    },
+    {
+      "name": "🖼️ Slider Management",
+      "item": [
+        {
+          "name": "Get Public Sliders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sliders",
+              "host": ["{{baseUrl}}"],
+              "path": ["sliders"]
+            },
+            "description": "Get all active sliders (Public endpoint for app)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Sliders (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/sliders",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "sliders"]
+            },
+            "description": "Get all sliders including inactive ones (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Slider",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Welcome Slider\",\n  \"imageUrl\": \"https://example.com/slider1.jpg\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sliders",
+              "host": ["{{baseUrl}}"],
+              "path": ["sliders"]
+            },
+            "description": "Create a new slider (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Slider",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Slider Title\",\n  \"isActive\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sliders/:sliderId",
+              "host": ["{{baseUrl}}"],
+              "path": ["sliders", ":sliderId"],
+              "variable": [
+                {
+                  "key": "sliderId",
+                  "value": "SLIDER_ID_HERE"
+                }
+              ]
+            },
+            "description": "Update slider information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Slider",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/sliders/:sliderId",
+              "host": ["{{baseUrl}}"],
+              "path": ["sliders", ":sliderId"],
+              "variable": [
+                {
+                  "key": "sliderId",
+                  "value": "SLIDER_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete a slider (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Image slider management endpoints for app content"
+    },
+    {
+      "name": "💬 Feedback Management",
+      "item": [
+        {
+          "name": "Get All Feedbacks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feedbacks",
+              "host": ["{{baseUrl}}"],
+              "path": ["feedbacks"]
+            },
+            "description": "Get all user feedbacks (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Feedback",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userName\": \"Test User\",\n  \"message\": \"Great app! Very useful for tracking locations.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/feedback",
+              "host": ["{{baseUrl}}"],
+              "path": ["feedback"]
+            },
+            "description": "Submit user feedback"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Feedback",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/feedbacks/:feedbackId",
+              "host": ["{{baseUrl}}"],
+              "path": ["feedbacks", ":feedbackId"],
+              "variable": [
+                {
+                  "key": "feedbackId",
+                  "value": "FEEDBACK_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete a feedback (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "User feedback management endpoints"
+    },
+    {
+      "name": "⚙️ Settings Management",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["settings"]
+            },
+            "description": "Get app settings (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"showSliders\": true,\n  \"showCoordinates\": true,\n  \"showFeedback\": true,\n  \"showContent\": true,\n  \"statisticsLink\": \"https://analytics.example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["settings"]
+            },
+            "description": "Update app settings (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Statistics Link",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/statistics-link",
+              "host": ["{{baseUrl}}"],
+              "path": ["statistics-link"]
+            },
+            "description": "Get statistics link (Public endpoint for app)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Application settings and configuration endpoints"
+    },
+    {
+      "name": "📝 Content Management",
+      "item": [
+        {
+          "name": "Get Public Contents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contents",
+              "host": ["{{baseUrl}}"],
+              "path": ["contents"]
+            },
+            "description": "Get all active content (Public endpoint for app)"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Contents (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/contents",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "contents"]
+            },
+            "description": "Get all content including inactive ones (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Content",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Welcome Message\",\n  \"content\": \"Welcome to our geo-fencing application! Track locations with ease and precision.\",\n  \"order\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contents",
+              "host": ["{{baseUrl}}"],
+              "path": ["contents"]
+            },
+            "description": "Create new content (Admin only) - Max 30 words"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Content",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Welcome Message\",\n  \"content\": \"Updated welcome message for our application users.\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contents/:contentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["contents", ":contentId"],
+              "variable": [
+                {
+                  "key": "contentId",
+                  "value": "CONTENT_ID_HERE"
+                }
+              ]
+            },
+            "description": "Update content information (Admin only)"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Content",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/contents/:contentId",
+              "host": ["{{baseUrl}}"],
+              "path": ["contents", ":contentId"],
+              "variable": [
+                {
+                  "key": "contentId",
+                  "value": "CONTENT_ID_HERE"
+                }
+              ]
+            },
+            "description": "Delete content (Admin only)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Text content management endpoints for app content"
+    },
+    {
+      "name": "📁 File Upload",
+      "item": [
+        {
+          "name": "Upload Image",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["upload"]
+            },
+            "description": "Upload image file (Admin only) - Max 5MB, supports JPG, PNG, GIF, WebP"
+          },
+          "response": []
+        }
+      ],
+      "description": "File upload endpoints for image management"
+    },
+    {
+      "name": "🏥 Health Check",
+      "item": [
+        {
+          "name": "Ping Server",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ping",
+              "host": ["{{baseUrl}}"],
+              "path": ["ping"]
+            },
+            "description": "Check if server is running"
+          },
+          "response": []
+        }
+      ],
+      "description": "Server health and status endpoints"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
