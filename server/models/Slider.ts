@@ -30,4 +30,4 @@ const sliderSchema = new Schema<ISlider>({
   timestamps: true
 });
 
-export const Slider = mongoose.model<ISlider>('Slider', sliderSchema);
+export const Slider = mongoose.models.Slider || mongoose.model<ISlider>('Slider', sliderSchema);
