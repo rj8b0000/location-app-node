@@ -52,11 +52,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <div className={cn(
         "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out",
-        "lg:translate-x-0 lg:static lg:inset-0 lg:z-auto",
+        "lg:translate-x-0 lg:static lg:inset-0 lg:z-auto lg:h-screen",
         sidebarOpen ? "translate-x-0" : "-translate-x-full",
-        "lg:transform-none" // Override transform on large screens
+        "lg:transform-none flex flex-col" // Make sidebar a flex container
       )}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+        {/* Sidebar Header */}
+        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
           <Button
             variant="ghost"
@@ -68,7 +69,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </Button>
         </div>
 
-        <nav className="mt-8 px-4">
+        {/* Navigation - takes remaining space */}
+        <nav className="flex-1 mt-6 px-4 overflow-y-auto">
           <div className="space-y-2">
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
@@ -92,7 +94,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </div>
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+        {/* User Info - fixed at bottom */}
+        <div className="flex-shrink-0 p-4 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="ml-3">
