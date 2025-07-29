@@ -221,5 +221,18 @@ export const api = {
       headers: getAuthHeaders()
     });
     return handleResponse(response);
+  },
+
+  // File Upload
+  async uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: formData
+    });
+    return handleResponse(response);
   }
 };
