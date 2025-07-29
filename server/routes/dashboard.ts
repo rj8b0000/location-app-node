@@ -7,18 +7,20 @@ import { Content } from '../models/Content';
 
 export const getDashboardStats: RequestHandler = async (req, res) => {
   try {
-    const [userCount, coordinateCount, sliderCount, feedbackCount] = await Promise.all([
+    const [userCount, coordinateCount, sliderCount, feedbackCount, contentCount] = await Promise.all([
       User.countDocuments(),
       Coordinate.countDocuments(),
       Slider.countDocuments(),
-      Feedback.countDocuments()
+      Feedback.countDocuments(),
+      Content.countDocuments()
     ]);
 
     res.json({
       totalUsers: userCount,
       totalCoordinates: coordinateCount,
       totalSliders: sliderCount,
-      totalFeedbacks: feedbackCount
+      totalFeedbacks: feedbackCount,
+      totalContent: contentCount
     });
   } catch (error) {
     console.error('Get dashboard stats error:', error);
