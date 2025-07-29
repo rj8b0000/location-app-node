@@ -88,7 +88,7 @@ export default function Feedback() {
               </div>
             ) : (
               <div className="space-y-4">
-                {feedbacks.map((feedback, index) => (
+                {(feedbacks || []).map((feedback, index) => (
                   <div
                     key={feedback._id || `feedback-${index}`}
                     className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
