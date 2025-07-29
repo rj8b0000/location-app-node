@@ -1,10 +1,10 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface ICoordinate extends Document {
   name: string;
   description?: string;
   polygon: {
-    type: 'Polygon';
+    type: "Polygon";
     coordinates: number[][][]; // [[[lng, lat], [lng, lat], ...]]
   };
   isActive: boolean;
@@ -12,35 +12,40 @@ export interface ICoordinate extends Document {
   updatedAt: Date;
 }
 
-const coordinateSchema = new Schema<ICoordinate>({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  description: {
-    type: String,
-    trim: true
-  },
-  polygon: {
-    type: {
+const coordinateSchema = new Schema<ICoordinate>(
+  {
+    name: {
       type: String,
-      enum: ['Polygon'],
-      required: true
+      required: true,
+      trim: true,
     },
-    coordinates: {
-      type: [[[Number]]],
-      required: true
-    }
+    description: {
+      type: String,
+      trim: true,
+    },
+    polygon: {
+      type: {
+        type: String,
+        enum: ["Polygon"],
+        required: true,
+      },
+      coordinates: {
+        type: [[[Number]]],
+        required: true,
+      },
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  isActive: {
-    type: Boolean,
-    default: true
-  }
-}, {
-  timestamps: true
-});
+  {
+    timestamps: true,
+  },
+);
 
-coordinateSchema.index({ polygon: '2dsphere' });
+coordinateSchema.index({ polygon: "2dsphere" });
 
-export const Coordinate = mongoose.models.Coordinate || mongoose.model<ICoordinate>('Coordinate', coordinateSchema);
+export const Coordinate =
+  mongoose.models.Coordinate ||
+  mongoose.model<ICoordinate>("Coordinate", coordinateSchema);

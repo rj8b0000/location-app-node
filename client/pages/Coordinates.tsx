@@ -1,23 +1,41 @@
-import React, { useState, useEffect } from 'react';
-import AdminLayout from '../components/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Badge } from '../components/ui/badge';
-import { api } from '../lib/api';
-import { MapPin, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
-import { Alert, AlertDescription } from '../components/ui/alert';
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { Badge } from "../components/ui/badge";
+import { api } from "../lib/api";
+import { MapPin, Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 
 interface Coordinate {
   _id: string;
   name: string;
   description?: string;
   polygon: {
-    type: 'Polygon';
+    type: "Polygon";
     coordinates: number[][][];
   };
   isActive: boolean;
@@ -29,20 +47,22 @@ export default function Coordinates() {
   const [coordinates, setCoordinates] = useState<Coordinate[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingCoordinate, setEditingCoordinate] = useState<Coordinate | null>(null);
+  const [editingCoordinate, setEditingCoordinate] = useState<Coordinate | null>(
+    null,
+  );
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    coordinates: ''
+    name: "",
+    description: "",
+    coordinates: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const fetchCoordinates = async () => {
     try {
       const data = await api.getCoordinates();
       setCoordinates(data);
     } catch (error) {
-      console.error('Failed to fetch coordinates:', error);
+      console.error("Failed to fetch coordinates:", error);
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +74,7 @@ export default function Coordinates() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
       // Parse coordinates string as JSON
@@ -62,7 +82,7 @@ export default function Coordinates() {
       try {
         parsedCoordinates = JSON.parse(formData.coordinates);
       } catch {
-        setError('Invalid coordinates format. Please provide valid JSON.');
+        setError("Invalid coordinates format. Please provide valid JSON.");
         return;
       }
 
@@ -70,9 +90,9 @@ export default function Coordinates() {
         name: formData.name,
         description: formData.description,
         polygon: {
-          type: 'Polygon',
-          coordinates: parsedCoordinates
-        }
+          type: "Polygon",
+          coordinates: parsedCoordinates,
+        },
       };
 
       if (editingCoordinate) {
@@ -83,10 +103,10 @@ export default function Coordinates() {
 
       setIsDialogOpen(false);
       setEditingCoordinate(null);
-      setFormData({ name: '', description: '', coordinates: '' });
+      setFormData({ name: "", description: "", coordinates: "" });
       fetchCoordinates();
     } catch (error: any) {
-      setError(error.message || 'Operation failed');
+      setError(error.message || "Operation failed");
     }
   };
 
@@ -94,43 +114,47 @@ export default function Coordinates() {
     setEditingCoordinate(coordinate);
     setFormData({
       name: coordinate.name,
-      description: coordinate.description || '',
-      coordinates: JSON.stringify(coordinate.polygon.coordinates, null, 2)
+      description: coordinate.description || "",
+      coordinates: JSON.stringify(coordinate.polygon.coordinates, null, 2),
     });
     setIsDialogOpen(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this coordinate?')) return;
+    if (!confirm("Are you sure you want to delete this coordinate?")) return;
 
     try {
       await api.deleteCoordinate(id);
       fetchCoordinates();
     } catch (error) {
-      console.error('Failed to delete coordinate:', error);
+      console.error("Failed to delete coordinate:", error);
     }
   };
 
   const toggleActive = async (coordinate: Coordinate) => {
     try {
-      await api.updateCoordinate(coordinate._id, { isActive: !coordinate.isActive });
+      await api.updateCoordinate(coordinate._id, {
+        isActive: !coordinate.isActive,
+      });
       fetchCoordinates();
     } catch (error) {
-      console.error('Failed to update coordinate status:', error);
+      console.error("Failed to update coordinate status:", error);
     }
   };
 
   const resetForm = () => {
-    setFormData({ name: '', description: '', coordinates: '' });
+    setFormData({ name: "", description: "", coordinates: "" });
     setEditingCoordinate(null);
-    setError('');
+    setError("");
   };
 
   if (isLoading) {
     return (
       <AdminLayout>
         <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">Coordinate Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Coordinate Management
+          </h1>
           <div className="animate-pulse">
             <div className="h-32 bg-gray-200 rounded"></div>
           </div>
@@ -143,11 +167,16 @@ export default function Coordinates() {
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Coordinate Management</h1>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Coordinate Management
+          </h1>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -157,7 +186,7 @@ export default function Coordinates() {
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>
-                  {editingCoordinate ? 'Edit Coordinate' : 'Add New Coordinate'}
+                  {editingCoordinate ? "Edit Coordinate" : "Add New Coordinate"}
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -166,13 +195,15 @@ export default function Coordinates() {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     placeholder="Enter coordinate name"
                     required
                   />
@@ -183,7 +214,9 @@ export default function Coordinates() {
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
                     placeholder="Enter description"
                     rows={3}
                   />
@@ -194,23 +227,30 @@ export default function Coordinates() {
                   <Textarea
                     id="coordinates"
                     value={formData.coordinates}
-                    onChange={(e) => setFormData({ ...formData, coordinates: e.target.value })}
-                    placeholder='[[[lng1, lat1], [lng2, lat2], [lng3, lat3], [lng1, lat1]]]'
+                    onChange={(e) =>
+                      setFormData({ ...formData, coordinates: e.target.value })
+                    }
+                    placeholder="[[[lng1, lat1], [lng2, lat2], [lng3, lat3], [lng1, lat1]]]"
                     rows={6}
                     className="font-mono text-sm"
                     required
                   />
                   <p className="text-xs text-gray-500">
-                    Example: [[[77.5946, 12.9716], [77.6946, 12.9716], [77.6946, 13.0716], [77.5946, 13.0716], [77.5946, 12.9716]]]
+                    Example: [[[77.5946, 12.9716], [77.6946, 12.9716], [77.6946,
+                    13.0716], [77.5946, 13.0716], [77.5946, 12.9716]]]
                   </p>
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit">
-                    {editingCoordinate ? 'Update' : 'Create'}
+                    {editingCoordinate ? "Update" : "Create"}
                   </Button>
                 </div>
               </form>
@@ -229,7 +269,10 @@ export default function Coordinates() {
             {coordinates.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <MapPin className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                <p>No coordinates found. Add your first coordinate to get started.</p>
+                <p>
+                  No coordinates found. Add your first coordinate to get
+                  started.
+                </p>
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -247,17 +290,24 @@ export default function Coordinates() {
                   <TableBody>
                     {coordinates.map((coordinate) => (
                       <TableRow key={coordinate._id}>
-                        <TableCell className="font-medium">{coordinate.name}</TableCell>
+                        <TableCell className="font-medium">
+                          {coordinate.name}
+                        </TableCell>
                         <TableCell className="max-w-xs truncate">
-                          {coordinate.description || 'No description'}
+                          {coordinate.description || "No description"}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={coordinate.isActive ? 'default' : 'secondary'}>
-                            {coordinate.isActive ? 'Active' : 'Inactive'}
+                          <Badge
+                            variant={
+                              coordinate.isActive ? "default" : "secondary"
+                            }
+                          >
+                            {coordinate.isActive ? "Active" : "Inactive"}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {coordinate.polygon.coordinates[0]?.length || 0} points
+                          {coordinate.polygon.coordinates[0]?.length || 0}{" "}
+                          points
                         </TableCell>
                         <TableCell>
                           {new Date(coordinate.createdAt).toLocaleDateString()}

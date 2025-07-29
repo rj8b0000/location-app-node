@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface ISlider extends Document {
   title?: string;
@@ -9,25 +9,29 @@ export interface ISlider extends Document {
   updatedAt: Date;
 }
 
-const sliderSchema = new Schema<ISlider>({
-  title: {
-    type: String,
-    trim: true
+const sliderSchema = new Schema<ISlider>(
+  {
+    title: {
+      type: String,
+      trim: true,
+    },
+    imageUrl: {
+      type: String,
+      required: true,
+    },
+    order: {
+      type: Number,
+      default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  imageUrl: {
-    type: String,
-    required: true
+  {
+    timestamps: true,
   },
-  order: {
-    type: Number,
-    default: 0
-  },
-  isActive: {
-    type: Boolean,
-    default: true
-  }
-}, {
-  timestamps: true
-});
+);
 
-export const Slider = mongoose.models.Slider || mongoose.model<ISlider>('Slider', sliderSchema);
+export const Slider =
+  mongoose.models.Slider || mongoose.model<ISlider>("Slider", sliderSchema);

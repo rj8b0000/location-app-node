@@ -1,8 +1,8 @@
-import React, { ReactNode } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-import { Button } from './ui/button';
-import { cn } from '../lib/utils';
+import React, { ReactNode } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Button } from "./ui/button";
+import { cn } from "../lib/utils";
 import {
   LayoutDashboard,
   Users,
@@ -12,21 +12,21 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
-} from 'lucide-react';
-import { useState } from 'react';
+  X,
+} from "lucide-react";
+import { useState } from "react";
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Users', href: '/users', icon: Users },
-  { name: 'Coordinates', href: '/coordinates', icon: MapPin },
-  { name: 'Sliders', href: '/sliders', icon: Image },
-  { name: 'Feedback', href: '/feedback', icon: MessageSquare },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Users", href: "/users", icon: Users },
+  { name: "Coordinates", href: "/coordinates", icon: MapPin },
+  { name: "Sliders", href: "/sliders", icon: Image },
+  { name: "Feedback", href: "/feedback", icon: MessageSquare },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
@@ -36,26 +36,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
 
   return (
     <div className="min-h-screen bg-gray-50 lg:flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
 
       {/* Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out",
-        "lg:translate-x-0 lg:static lg:inset-0 lg:z-auto lg:w-64 lg:flex-shrink-0",
-        sidebarOpen ? "translate-x-0" : "-translate-x-full",
-        "lg:transform-none flex flex-col" // Make sidebar a flex container
-      )}>
+      <div
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out",
+          "lg:translate-x-0 lg:static lg:inset-0 lg:z-auto lg:w-64 lg:flex-shrink-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+          "lg:transform-none flex flex-col", // Make sidebar a flex container
+        )}
+      >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
@@ -82,7 +84,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
                     isActive
                       ? "bg-purple-100 text-purple-700"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
                   )}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -99,8 +101,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div>
-                <p className="text-sm font-medium text-gray-700">{user?.fullName || 'Admin User'}</p>
-                <p className="text-xs text-gray-500">{user?.role || 'admin'}</p>
+                <p className="text-sm font-medium text-gray-700">
+                  {user?.fullName || "Admin User"}
+                </p>
+                <p className="text-xs text-gray-500">{user?.role || "admin"}</p>
               </div>
             </div>
             <Button
@@ -132,9 +136,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-6 lg:pt-6 bg-gray-50">
-          {children}
-        </main>
+        <main className="p-4 sm:p-6 lg:p-6 lg:pt-6 bg-gray-50">{children}</main>
       </div>
     </div>
   );

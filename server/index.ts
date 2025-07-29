@@ -6,13 +6,39 @@ import { authenticate, requireAdmin } from "./middleware/auth";
 
 // Route imports
 import { register, login, getProfile } from "./routes/auth";
-import { getCoordinates, createCoordinate, updateCoordinate, deleteCoordinate, checkLocationInPolygon } from "./routes/coordinates";
-import { getSliders, getAllSliders, createSlider, updateSlider, deleteSlider } from "./routes/sliders";
-import { getFeedbacks, createFeedback, deleteFeedback } from "./routes/feedback";
-import { getSettings, updateSettings, getStatisticsLink } from "./routes/settings";
+import {
+  getCoordinates,
+  createCoordinate,
+  updateCoordinate,
+  deleteCoordinate,
+  checkLocationInPolygon,
+} from "./routes/coordinates";
+import {
+  getSliders,
+  getAllSliders,
+  createSlider,
+  updateSlider,
+  deleteSlider,
+} from "./routes/sliders";
+import {
+  getFeedbacks,
+  createFeedback,
+  deleteFeedback,
+} from "./routes/feedback";
+import {
+  getSettings,
+  updateSettings,
+  getStatisticsLink,
+} from "./routes/settings";
 import { getUsers, createUser, updateUser, deleteUser } from "./routes/users";
 import { getDashboardStats } from "./routes/dashboard";
-import { getContents, getActiveContents, createContent, updateContent, deleteContent } from "./routes/content";
+import {
+  getContents,
+  getActiveContents,
+  createContent,
+  updateContent,
+  deleteContent,
+} from "./routes/content";
 import { uploadImage } from "./routes/upload";
 
 export function createServer() {
@@ -23,11 +49,11 @@ export function createServer() {
 
   // Middleware
   app.use(cors());
-  app.use(express.json({ limit: '10mb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
   // Serve uploaded files statically
-  app.use('/uploads', express.static('public/uploads'));
+  app.use("/uploads", express.static("public/uploads"));
 
   // Request logging middleware
   app.use((req, res, next) => {
@@ -47,7 +73,12 @@ export function createServer() {
   app.get("/api/auth/profile", authenticate, getProfile);
 
   // Dashboard routes
-  app.get("/api/dashboard/stats", authenticate, requireAdmin, getDashboardStats);
+  app.get(
+    "/api/dashboard/stats",
+    authenticate,
+    requireAdmin,
+    getDashboardStats,
+  );
 
   // User management routes (admin only)
   app.get("/api/users", authenticate, requireAdmin, getUsers);
@@ -59,7 +90,12 @@ export function createServer() {
   app.get("/api/coordinates", authenticate, requireAdmin, getCoordinates);
   app.post("/api/coordinates", authenticate, requireAdmin, createCoordinate);
   app.put("/api/coordinates/:id", authenticate, requireAdmin, updateCoordinate);
-  app.delete("/api/coordinates/:id", authenticate, requireAdmin, deleteCoordinate);
+  app.delete(
+    "/api/coordinates/:id",
+    authenticate,
+    requireAdmin,
+    deleteCoordinate,
+  );
   app.post("/api/coordinates/check", authenticate, checkLocationInPolygon);
 
   // Slider routes

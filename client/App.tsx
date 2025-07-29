@@ -32,7 +32,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!user || user.role !== "admin") {
     return <Navigate to="/login" replace />;
   }
 
@@ -51,7 +51,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (user && user.role === 'admin') {
+  if (user && user.role === "admin") {
     return <Navigate to="/dashboard" replace />;
   }
 

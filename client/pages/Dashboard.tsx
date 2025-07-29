@@ -1,8 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import AdminLayout from '../components/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { api } from '../lib/api';
-import { Users, MapPin, Image, MessageSquare, Activity, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { api } from "../lib/api";
+import {
+  Users,
+  MapPin,
+  Image,
+  MessageSquare,
+  Activity,
+  TrendingUp,
+} from "lucide-react";
 
 interface DashboardStats {
   totalUsers: number;
@@ -11,7 +23,12 @@ interface DashboardStats {
   totalFeedbacks: number;
 }
 
-const StatCard = ({ title, value, icon: Icon, color }: {
+const StatCard = ({
+  title,
+  value,
+  icon: Icon,
+  color,
+}: {
   title: string;
   value: number;
   icon: any;
@@ -19,7 +36,9 @@ const StatCard = ({ title, value, icon: Icon, color }: {
 }) => (
   <Card>
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-      <CardTitle className="text-sm font-medium text-gray-600">{title}</CardTitle>
+      <CardTitle className="text-sm font-medium text-gray-600">
+        {title}
+      </CardTitle>
       <Icon className={`h-4 w-4 ${color}`} />
     </CardHeader>
     <CardContent>
@@ -33,7 +52,7 @@ export default function Dashboard() {
     totalUsers: 0,
     totalCoordinates: 0,
     totalSliders: 0,
-    totalFeedbacks: 0
+    totalFeedbacks: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -43,7 +62,7 @@ export default function Dashboard() {
         const response = await api.getDashboardStats();
         setStats(response);
       } catch (error) {
-        console.error('Failed to fetch dashboard stats:', error);
+        console.error("Failed to fetch dashboard stats:", error);
       } finally {
         setIsLoading(false);
       }
@@ -130,15 +149,21 @@ export default function Dashboard() {
                 </div>
                 <div className="flex items-center justify-between py-2 border-b">
                   <span className="text-gray-600">Geo Locations</span>
-                  <span className="font-medium">{stats.totalCoordinates} areas</span>
+                  <span className="font-medium">
+                    {stats.totalCoordinates} areas
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b">
                   <span className="text-gray-600">Media Content</span>
-                  <span className="font-medium">{stats.totalSliders} sliders</span>
+                  <span className="font-medium">
+                    {stats.totalSliders} sliders
+                  </span>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <span className="text-gray-600">User Feedback</span>
-                  <span className="font-medium">{stats.totalFeedbacks} messages</span>
+                  <span className="font-medium">
+                    {stats.totalFeedbacks} messages
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -154,21 +179,29 @@ export default function Dashboard() {
                   <span className="text-sm text-gray-600">API Status</span>
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-medium text-green-600">Online</span>
+                    <span className="text-sm font-medium text-green-600">
+                      Online
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-600">Database</span>
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-medium text-green-600">Connected</span>
+                    <span className="text-sm font-medium text-green-600">
+                      Connected
+                    </span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Location Services</span>
+                  <span className="text-sm text-gray-600">
+                    Location Services
+                  </span>
                   <div className="flex items-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-medium text-green-600">Active</span>
+                    <span className="text-sm font-medium text-green-600">
+                      Active
+                    </span>
                   </div>
                 </div>
               </div>

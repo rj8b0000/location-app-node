@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IFeedback extends Document {
   userName: string;
@@ -8,23 +8,28 @@ export interface IFeedback extends Document {
   updatedAt: Date;
 }
 
-const feedbackSchema = new Schema<IFeedback>({
-  userName: {
-    type: String,
-    required: true,
-    trim: true
+const feedbackSchema = new Schema<IFeedback>(
+  {
+    userName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    message: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
-  message: {
-    type: String,
-    required: true,
-    trim: true
+  {
+    timestamps: true,
   },
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }
-}, {
-  timestamps: true
-});
+);
 
-export const Feedback = mongoose.models.Feedback || mongoose.model<IFeedback>('Feedback', feedbackSchema);
+export const Feedback =
+  mongoose.models.Feedback ||
+  mongoose.model<IFeedback>("Feedback", feedbackSchema);

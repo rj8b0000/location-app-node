@@ -1,17 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import AdminLayout from '../components/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Textarea } from '../components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Badge } from '../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { api } from '../lib/api';
-import { Image as ImageIcon, Plus, Edit, Trash2, Eye, EyeOff, ExternalLink, FileText, Upload, X } from 'lucide-react';
-import { Alert, AlertDescription } from '../components/ui/alert';
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { Badge } from "../components/ui/badge";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import { api } from "../lib/api";
+import {
+  Image as ImageIcon,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  EyeOff,
+  ExternalLink,
+  FileText,
+  Upload,
+  X,
+} from "lucide-react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 
 interface Slider {
   _id: string;
@@ -41,14 +75,14 @@ export default function Sliders() {
   const [isSliderDialogOpen, setIsSliderDialogOpen] = useState(false);
   const [editingSlider, setEditingSlider] = useState<Slider | null>(null);
   const [sliderFormData, setSliderFormData] = useState({
-    title: '',
-    imageUrl: '',
-    order: 0
+    title: "",
+    imageUrl: "",
+    order: 0,
   });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
+  const [uploadMethod, setUploadMethod] = useState<"url" | "file">("url");
   const [isUploading, setIsUploading] = useState(false);
-  const [sliderError, setSliderError] = useState('');
+  const [sliderError, setSliderError] = useState("");
 
   // Content state
   const [contents, setContents] = useState<Content[]>([]);
@@ -56,15 +90,18 @@ export default function Sliders() {
   const [isContentDialogOpen, setIsContentDialogOpen] = useState(false);
   const [editingContent, setEditingContent] = useState<Content | null>(null);
   const [contentFormData, setContentFormData] = useState({
-    title: '',
-    content: '',
-    order: 0
+    title: "",
+    content: "",
+    order: 0,
   });
-  const [contentError, setContentError] = useState('');
+  const [contentError, setContentError] = useState("");
 
   // Word count calculation
   const getWordCount = (text: string) => {
-    return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+    return text
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
   };
 
   const fetchSliders = async () => {
@@ -72,7 +109,7 @@ export default function Sliders() {
       const data = await api.getSliders();
       setSliders(data);
     } catch (error) {
-      console.error('Failed to fetch sliders:', error);
+      console.error("Failed to fetch sliders:", error);
     } finally {
       setIsSliderLoading(false);
     }
@@ -83,7 +120,7 @@ export default function Sliders() {
       const data = await api.getContents();
       setContents(data);
     } catch (error) {
-      console.error('Failed to fetch contents:', error);
+      console.error("Failed to fetch contents:", error);
     } finally {
       setIsContentLoading(false);
     }
@@ -102,27 +139,27 @@ export default function Sliders() {
 
   const handleSliderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSliderError('');
+    setSliderError("");
     setIsUploading(true);
 
     try {
       let imageUrl = sliderFormData.imageUrl;
 
       // If uploading a file, upload it first
-      if (uploadMethod === 'file' && selectedFile) {
+      if (uploadMethod === "file" && selectedFile) {
         imageUrl = await handleFileUpload(selectedFile);
       }
 
       // Validate that we have an image URL
       if (!imageUrl) {
-        setSliderError('Please provide an image URL or upload a file');
+        setSliderError("Please provide an image URL or upload a file");
         return;
       }
 
       const sliderData = {
         title: sliderFormData.title || undefined,
         imageUrl,
-        order: sliderFormData.order
+        order: sliderFormData.order,
       };
 
       if (editingSlider) {
@@ -135,7 +172,7 @@ export default function Sliders() {
       resetSliderForm();
       fetchSliders();
     } catch (error: any) {
-      setSliderError(error.message || 'Operation failed');
+      setSliderError(error.message || "Operation failed");
     } finally {
       setIsUploading(false);
     }
@@ -145,46 +182,48 @@ export default function Sliders() {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setSliderError('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        setSliderError("Please select an image file");
         return;
       }
       // Validate file size (5MB max)
       if (file.size > 5 * 1024 * 1024) {
-        setSliderError('File size must be less than 5MB');
+        setSliderError("File size must be less than 5MB");
         return;
       }
       setSelectedFile(file);
-      setSliderError('');
+      setSliderError("");
       // Clear URL when file is selected
-      setSliderFormData({ ...sliderFormData, imageUrl: '' });
+      setSliderFormData({ ...sliderFormData, imageUrl: "" });
     }
   };
 
   const removeSelectedFile = () => {
     setSelectedFile(null);
-    const fileInput = document.getElementById('file-upload') as HTMLInputElement;
-    if (fileInput) fileInput.value = '';
+    const fileInput = document.getElementById(
+      "file-upload",
+    ) as HTMLInputElement;
+    if (fileInput) fileInput.value = "";
   };
 
   const handleSliderEdit = (slider: Slider) => {
     setEditingSlider(slider);
     setSliderFormData({
-      title: slider.title || '',
+      title: slider.title || "",
       imageUrl: slider.imageUrl,
-      order: slider.order
+      order: slider.order,
     });
     setIsSliderDialogOpen(true);
   };
 
   const handleSliderDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this slider?')) return;
+    if (!confirm("Are you sure you want to delete this slider?")) return;
 
     try {
       await api.deleteSlider(id);
       fetchSliders();
     } catch (error) {
-      console.error('Failed to delete slider:', error);
+      console.error("Failed to delete slider:", error);
     }
   };
 
@@ -193,26 +232,26 @@ export default function Sliders() {
       await api.updateSlider(slider._id, { isActive: !slider.isActive });
       fetchSliders();
     } catch (error) {
-      console.error('Failed to update slider status:', error);
+      console.error("Failed to update slider status:", error);
     }
   };
 
   // Content functions
   const handleContentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setContentError('');
+    setContentError("");
 
     try {
       const wordCount = getWordCount(contentFormData.content);
       if (wordCount > 30) {
-        setContentError('Content cannot exceed 30 words');
+        setContentError("Content cannot exceed 30 words");
         return;
       }
 
       const contentData = {
         title: contentFormData.title,
         content: contentFormData.content,
-        order: contentFormData.order
+        order: contentFormData.order,
       };
 
       if (editingContent) {
@@ -223,10 +262,10 @@ export default function Sliders() {
 
       setIsContentDialogOpen(false);
       setEditingContent(null);
-      setContentFormData({ title: '', content: '', order: 0 });
+      setContentFormData({ title: "", content: "", order: 0 });
       fetchContents();
     } catch (error: any) {
-      setContentError(error.message || 'Operation failed');
+      setContentError(error.message || "Operation failed");
     }
   };
 
@@ -235,19 +274,19 @@ export default function Sliders() {
     setContentFormData({
       title: content.title,
       content: content.content,
-      order: content.order
+      order: content.order,
     });
     setIsContentDialogOpen(true);
   };
 
   const handleContentDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this content?')) return;
+    if (!confirm("Are you sure you want to delete this content?")) return;
 
     try {
       await api.deleteContent(id);
       fetchContents();
     } catch (error) {
-      console.error('Failed to delete content:', error);
+      console.error("Failed to delete content:", error);
     }
   };
 
@@ -256,23 +295,23 @@ export default function Sliders() {
       await api.updateContent(content._id, { isActive: !content.isActive });
       fetchContents();
     } catch (error) {
-      console.error('Failed to update content status:', error);
+      console.error("Failed to update content status:", error);
     }
   };
 
   const resetSliderForm = () => {
-    setSliderFormData({ title: '', imageUrl: '', order: 0 });
+    setSliderFormData({ title: "", imageUrl: "", order: 0 });
     setEditingSlider(null);
-    setSliderError('');
+    setSliderError("");
     setSelectedFile(null);
-    setUploadMethod('url');
+    setUploadMethod("url");
     setIsUploading(false);
   };
 
   const resetContentForm = () => {
-    setContentFormData({ title: '', content: '', order: 0 });
+    setContentFormData({ title: "", content: "", order: 0 });
     setEditingContent(null);
-    setContentError('');
+    setContentError("");
   };
 
   const currentWordCount = getWordCount(contentFormData.content);
@@ -281,7 +320,9 @@ export default function Sliders() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <h1 className="text-3xl font-bold text-gray-900">Media & Content Management</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Media & Content Management
+        </h1>
 
         <Tabs defaultValue="sliders" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
@@ -298,11 +339,16 @@ export default function Sliders() {
           {/* Sliders Tab */}
           <TabsContent value="sliders" className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-800">Image Sliders</h2>
-              <Dialog open={isSliderDialogOpen} onOpenChange={(open) => {
-                setIsSliderDialogOpen(open);
-                if (!open) resetSliderForm();
-              }}>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Image Sliders
+              </h2>
+              <Dialog
+                open={isSliderDialogOpen}
+                onOpenChange={(open) => {
+                  setIsSliderDialogOpen(open);
+                  if (!open) resetSliderForm();
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
@@ -312,7 +358,7 @@ export default function Sliders() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>
-                      {editingSlider ? 'Edit Slider' : 'Add New Slider'}
+                      {editingSlider ? "Edit Slider" : "Add New Slider"}
                     </DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleSliderSubmit} className="space-y-4">
@@ -327,7 +373,12 @@ export default function Sliders() {
                       <Input
                         id="slider-title"
                         value={sliderFormData.title}
-                        onChange={(e) => setSliderFormData({ ...sliderFormData, title: e.target.value })}
+                        onChange={(e) =>
+                          setSliderFormData({
+                            ...sliderFormData,
+                            title: e.target.value,
+                          })
+                        }
                         placeholder="Enter slider title"
                       />
                     </div>
@@ -337,9 +388,11 @@ export default function Sliders() {
                       <div className="flex space-x-4">
                         <Button
                           type="button"
-                          variant={uploadMethod === 'url' ? 'default' : 'outline'}
+                          variant={
+                            uploadMethod === "url" ? "default" : "outline"
+                          }
                           onClick={() => {
-                            setUploadMethod('url');
+                            setUploadMethod("url");
                             setSelectedFile(null);
                           }}
                           className="flex-1"
@@ -349,10 +402,15 @@ export default function Sliders() {
                         </Button>
                         <Button
                           type="button"
-                          variant={uploadMethod === 'file' ? 'default' : 'outline'}
+                          variant={
+                            uploadMethod === "file" ? "default" : "outline"
+                          }
                           onClick={() => {
-                            setUploadMethod('file');
-                            setSliderFormData({ ...sliderFormData, imageUrl: '' });
+                            setUploadMethod("file");
+                            setSliderFormData({
+                              ...sliderFormData,
+                              imageUrl: "",
+                            });
                           }}
                           className="flex-1"
                         >
@@ -362,16 +420,21 @@ export default function Sliders() {
                       </div>
                     </div>
 
-                    {uploadMethod === 'url' ? (
+                    {uploadMethod === "url" ? (
                       <div className="space-y-2">
                         <Label htmlFor="slider-imageUrl">Image URL</Label>
                         <Input
                           id="slider-imageUrl"
                           type="url"
                           value={sliderFormData.imageUrl}
-                          onChange={(e) => setSliderFormData({ ...sliderFormData, imageUrl: e.target.value })}
+                          onChange={(e) =>
+                            setSliderFormData({
+                              ...sliderFormData,
+                              imageUrl: e.target.value,
+                            })
+                          }
                           placeholder="https://example.com/image.jpg"
-                          required={uploadMethod === 'url'}
+                          required={uploadMethod === "url"}
                         />
                       </div>
                     ) : (
@@ -392,9 +455,13 @@ export default function Sliders() {
                             <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
                               <div className="flex items-center">
                                 <ImageIcon className="mr-2 h-4 w-4 text-gray-500" />
-                                <span className="text-sm text-gray-700">{selectedFile.name}</span>
+                                <span className="text-sm text-gray-700">
+                                  {selectedFile.name}
+                                </span>
                                 <span className="ml-2 text-xs text-gray-500">
-                                  ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                                  (
+                                  {(selectedFile.size / 1024 / 1024).toFixed(2)}{" "}
+                                  MB)
                                 </span>
                               </div>
                               <Button
@@ -418,7 +485,12 @@ export default function Sliders() {
                         id="slider-order"
                         type="number"
                         value={sliderFormData.order}
-                        onChange={(e) => setSliderFormData({ ...sliderFormData, order: parseInt(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          setSliderFormData({
+                            ...sliderFormData,
+                            order: parseInt(e.target.value) || 0,
+                          })
+                        }
                         placeholder="0"
                         min="0"
                       />
@@ -428,13 +500,14 @@ export default function Sliders() {
                       <div className="space-y-2">
                         <Label>Preview</Label>
                         <div className="border rounded-lg overflow-hidden">
-                          {uploadMethod === 'url' ? (
+                          {uploadMethod === "url" ? (
                             <img
                               src={sliderFormData.imageUrl}
                               alt="Preview"
                               className="w-full h-32 object-cover"
                               onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).style.display =
+                                  "none";
                               }}
                             />
                           ) : selectedFile ? (
@@ -449,17 +522,29 @@ export default function Sliders() {
                     )}
 
                     <div className="flex justify-end space-x-2">
-                      <Button type="button" variant="outline" onClick={() => setIsSliderDialogOpen(false)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsSliderDialogOpen(false)}
+                      >
                         Cancel
                       </Button>
-                      <Button type="submit" disabled={isUploading || (!sliderFormData.imageUrl && !selectedFile)}>
+                      <Button
+                        type="submit"
+                        disabled={
+                          isUploading ||
+                          (!sliderFormData.imageUrl && !selectedFile)
+                        }
+                      >
                         {isUploading ? (
                           <>
                             <Upload className="mr-2 h-4 w-4 animate-spin" />
-                            {uploadMethod === 'file' ? 'Uploading...' : 'Creating...'}
+                            {uploadMethod === "file"
+                              ? "Uploading..."
+                              : "Creating..."}
                           </>
                         ) : (
-                          <>{editingSlider ? 'Update' : 'Create'}</>
+                          <>{editingSlider ? "Update" : "Create"}</>
                         )}
                       </Button>
                     </div>
@@ -478,7 +563,9 @@ export default function Sliders() {
                 ) : sliders.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
                     <ImageIcon className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                    <p>No sliders found. Add your first slider to get started.</p>
+                    <p>
+                      No sliders found. Add your first slider to get started.
+                    </p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -499,10 +586,11 @@ export default function Sliders() {
                               <div className="w-16 h-12 bg-gray-100 rounded overflow-hidden">
                                 <img
                                   src={slider.imageUrl}
-                                  alt={slider.title || 'Slider'}
+                                  alt={slider.title || "Slider"}
                                   className="w-full h-full object-cover"
                                   onError={(e) => {
-                                    (e.target as HTMLImageElement).src = '/placeholder.svg';
+                                    (e.target as HTMLImageElement).src =
+                                      "/placeholder.svg";
                                   }}
                                 />
                               </div>
@@ -510,7 +598,7 @@ export default function Sliders() {
                             <TableCell>
                               <div>
                                 <div className="font-medium">
-                                  {slider.title || 'Untitled'}
+                                  {slider.title || "Untitled"}
                                 </div>
                                 <div className="text-sm text-gray-500 flex items-center">
                                   <ExternalLink className="mr-1 h-3 w-3" />
@@ -526,8 +614,12 @@ export default function Sliders() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant={slider.isActive ? 'default' : 'secondary'}>
-                                {slider.isActive ? 'Active' : 'Inactive'}
+                              <Badge
+                                variant={
+                                  slider.isActive ? "default" : "secondary"
+                                }
+                              >
+                                {slider.isActive ? "Active" : "Inactive"}
                               </Badge>
                             </TableCell>
                             <TableCell>{slider.order}</TableCell>
@@ -574,11 +666,16 @@ export default function Sliders() {
           {/* Content Tab */}
           <TabsContent value="content" className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-800">Text Content</h2>
-              <Dialog open={isContentDialogOpen} onOpenChange={(open) => {
-                setIsContentDialogOpen(open);
-                if (!open) resetContentForm();
-              }}>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Text Content
+              </h2>
+              <Dialog
+                open={isContentDialogOpen}
+                onOpenChange={(open) => {
+                  setIsContentDialogOpen(open);
+                  if (!open) resetContentForm();
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="mr-2 h-4 w-4" />
@@ -588,7 +685,7 @@ export default function Sliders() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>
-                      {editingContent ? 'Edit Content' : 'Add New Content'}
+                      {editingContent ? "Edit Content" : "Add New Content"}
                     </DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleContentSubmit} className="space-y-4">
@@ -597,13 +694,18 @@ export default function Sliders() {
                         <AlertDescription>{contentError}</AlertDescription>
                       </Alert>
                     )}
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="content-title">Title</Label>
                       <Input
                         id="content-title"
                         value={contentFormData.title}
-                        onChange={(e) => setContentFormData({ ...contentFormData, title: e.target.value })}
+                        onChange={(e) =>
+                          setContentFormData({
+                            ...contentFormData,
+                            title: e.target.value,
+                          })
+                        }
                         placeholder="Enter content title"
                         required
                       />
@@ -614,18 +716,31 @@ export default function Sliders() {
                       <Textarea
                         id="content-text"
                         value={contentFormData.content}
-                        onChange={(e) => setContentFormData({ ...contentFormData, content: e.target.value })}
+                        onChange={(e) =>
+                          setContentFormData({
+                            ...contentFormData,
+                            content: e.target.value,
+                          })
+                        }
                         placeholder="Enter your content here (max 30 words)"
                         rows={4}
                         required
-                        className={isWordLimitExceeded ? 'border-red-500' : ''}
+                        className={isWordLimitExceeded ? "border-red-500" : ""}
                       />
                       <div className="flex justify-between items-center text-xs">
-                        <span className={isWordLimitExceeded ? 'text-red-500' : 'text-gray-500'}>
+                        <span
+                          className={
+                            isWordLimitExceeded
+                              ? "text-red-500"
+                              : "text-gray-500"
+                          }
+                        >
                           Words: {currentWordCount}/30
                         </span>
                         {isWordLimitExceeded && (
-                          <span className="text-red-500">Word limit exceeded!</span>
+                          <span className="text-red-500">
+                            Word limit exceeded!
+                          </span>
                         )}
                       </div>
                     </div>
@@ -636,18 +751,27 @@ export default function Sliders() {
                         id="content-order"
                         type="number"
                         value={contentFormData.order}
-                        onChange={(e) => setContentFormData({ ...contentFormData, order: parseInt(e.target.value) || 0 })}
+                        onChange={(e) =>
+                          setContentFormData({
+                            ...contentFormData,
+                            order: parseInt(e.target.value) || 0,
+                          })
+                        }
                         placeholder="0"
                         min="0"
                       />
                     </div>
 
                     <div className="flex justify-end space-x-2">
-                      <Button type="button" variant="outline" onClick={() => setIsContentDialogOpen(false)}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsContentDialogOpen(false)}
+                      >
                         Cancel
                       </Button>
                       <Button type="submit" disabled={isWordLimitExceeded}>
-                        {editingContent ? 'Update' : 'Create'}
+                        {editingContent ? "Update" : "Create"}
                       </Button>
                     </div>
                   </form>
@@ -665,7 +789,9 @@ export default function Sliders() {
                 ) : contents.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
                     <FileText className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                    <p>No content found. Add your first content to get started.</p>
+                    <p>
+                      No content found. Add your first content to get started.
+                    </p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -683,15 +809,21 @@ export default function Sliders() {
                       <TableBody>
                         {contents.map((content) => (
                           <TableRow key={content._id}>
-                            <TableCell className="font-medium">{content.title}</TableCell>
+                            <TableCell className="font-medium">
+                              {content.title}
+                            </TableCell>
                             <TableCell className="max-w-md">
                               <div className="truncate" title={content.content}>
                                 {content.content}
                               </div>
                             </TableCell>
                             <TableCell>
-                              <Badge variant={content.isActive ? 'default' : 'secondary'}>
-                                {content.isActive ? 'Active' : 'Inactive'}
+                              <Badge
+                                variant={
+                                  content.isActive ? "default" : "secondary"
+                                }
+                              >
+                                {content.isActive ? "Active" : "Inactive"}
                               </Badge>
                             </TableCell>
                             <TableCell>{content.wordCount}/30</TableCell>
@@ -719,7 +851,9 @@ export default function Sliders() {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => handleContentDelete(content._id)}
+                                  onClick={() =>
+                                    handleContentDelete(content._id)
+                                  }
                                   className="text-red-600 hover:text-red-800"
                                 >
                                   <Trash2 className="h-4 w-4" />

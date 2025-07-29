@@ -1,10 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import AdminLayout from '../components/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { api } from '../lib/api';
-import { MessageSquare, Trash2, User, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { api } from "../lib/api";
+import { MessageSquare, Trash2, User, Calendar } from "lucide-react";
 
 interface Feedback {
   _id: string;
@@ -28,7 +40,7 @@ export default function Feedback() {
       const data = await api.getFeedbacks();
       setFeedbacks(data);
     } catch (error) {
-      console.error('Failed to fetch feedbacks:', error);
+      console.error("Failed to fetch feedbacks:", error);
     } finally {
       setIsLoading(false);
     }
@@ -39,13 +51,13 @@ export default function Feedback() {
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this feedback?')) return;
+    if (!confirm("Are you sure you want to delete this feedback?")) return;
 
     try {
       await api.deleteFeedback(id);
       fetchFeedbacks();
     } catch (error) {
-      console.error('Failed to delete feedback:', error);
+      console.error("Failed to delete feedback:", error);
     }
   };
 
@@ -53,7 +65,9 @@ export default function Feedback() {
     return (
       <AdminLayout>
         <div className="space-y-6">
-          <h1 className="text-3xl font-bold text-gray-900">Feedback Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Feedback Management
+          </h1>
           <div className="animate-pulse">
             <div className="h-32 bg-gray-200 rounded"></div>
           </div>
@@ -66,7 +80,9 @@ export default function Feedback() {
     <AdminLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Feedback Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Feedback Management
+          </h1>
           <div className="text-sm text-gray-500">
             Total: {feedbacks?.length || 0} feedback entries
           </div>
@@ -161,7 +177,7 @@ export default function Feedback() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {feedback.userId?.mobileNumber || 'N/A'}
+                          {feedback.userId?.mobileNumber || "N/A"}
                         </TableCell>
                         <TableCell>
                           {new Date(feedback.createdAt).toLocaleDateString()}

@@ -1,22 +1,53 @@
-import React, { useState, useEffect } from 'react';
-import AdminLayout from '../components/AdminLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
-import { Badge } from '../components/ui/badge';
-import { api } from '../lib/api';
-import { Users as UsersIcon, Plus, Edit, Trash2, Phone, User } from 'lucide-react';
-import { Alert, AlertDescription } from '../components/ui/alert';
+import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { Badge } from "../components/ui/badge";
+import { api } from "../lib/api";
+import {
+  Users as UsersIcon,
+  Plus,
+  Edit,
+  Trash2,
+  Phone,
+  User,
+} from "lucide-react";
+import { Alert, AlertDescription } from "../components/ui/alert";
 
 interface User {
   _id: string;
   fullName: string;
   mobileNumber: string;
-  role: 'admin' | 'user';
+  role: "admin" | "user";
   createdAt: string;
   updatedAt: string;
 }
@@ -27,28 +58,29 @@ export default function Users() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [formData, setFormData] = useState({
-    fullName: '',
-    mobileNumber: '',
-    password: '',
-    role: 'user' as 'admin' | 'user'
+    fullName: "",
+    mobileNumber: "",
+    password: "",
+    role: "user" as "admin" | "user",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const fetchUsers = async () => {
     try {
       const data = await api.getUsers();
       // Filter out any invalid user objects
-      const validUsers = data.filter((user: any) =>
-        user &&
-        user._id &&
-        user.fullName &&
-        user.mobileNumber &&
-        user.role &&
-        user.createdAt
+      const validUsers = data.filter(
+        (user: any) =>
+          user &&
+          user._id &&
+          user.fullName &&
+          user.mobileNumber &&
+          user.role &&
+          user.createdAt,
       );
       setUsers(validUsers);
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      console.error("Failed to fetch users:", error);
     } finally {
       setIsLoading(false);
     }
@@ -60,21 +92,21 @@ export default function Users() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     try {
       const userData = {
         fullName: formData.fullName,
         mobileNumber: formData.mobileNumber,
         role: formData.role,
-        ...(formData.password && { password: formData.password })
+        ...(formData.password && { password: formData.password }),
       };
 
       if (editingUser) {
         await api.updateUser(editingUser._id, userData);
       } else {
         if (!formData.password) {
-          setError('Password is required for new users');
+          setError("Password is required for new users");
           return;
         }
         await api.createUser(userData);
@@ -82,10 +114,15 @@ export default function Users() {
 
       setIsDialogOpen(false);
       setEditingUser(null);
-      setFormData({ fullName: '', mobileNumber: '', password: '', role: 'user' });
+      setFormData({
+        fullName: "",
+        mobileNumber: "",
+        password: "",
+        role: "user",
+      });
       fetchUsers();
     } catch (error: any) {
-      setError(error.message || 'Operation failed');
+      setError(error.message || "Operation failed");
     }
   };
 
@@ -94,27 +131,27 @@ export default function Users() {
     setFormData({
       fullName: user.fullName,
       mobileNumber: user.mobileNumber,
-      password: '',
-      role: user.role
+      password: "",
+      role: user.role,
     });
     setIsDialogOpen(true);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
+    if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
       await api.deleteUser(id);
       fetchUsers();
     } catch (error) {
-      console.error('Failed to delete user:', error);
+      console.error("Failed to delete user:", error);
     }
   };
 
   const resetForm = () => {
-    setFormData({ fullName: '', mobileNumber: '', password: '', role: 'user' });
+    setFormData({ fullName: "", mobileNumber: "", password: "", role: "user" });
     setEditingUser(null);
-    setError('');
+    setError("");
   };
 
   if (isLoading) {
@@ -135,10 +172,13 @@ export default function Users() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -148,7 +188,7 @@ export default function Users() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
-                  {editingUser ? 'Edit User' : 'Add New User'}
+                  {editingUser ? "Edit User" : "Add New User"}
                 </DialogTitle>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,13 +197,15 @@ export default function Users() {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="fullName">Full Name</Label>
                   <Input
                     id="fullName"
                     value={formData.fullName}
-                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fullName: e.target.value })
+                    }
                     placeholder="Enter full name"
                     required
                   />
@@ -175,7 +217,9 @@ export default function Users() {
                     id="mobileNumber"
                     type="tel"
                     value={formData.mobileNumber}
-                    onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, mobileNumber: e.target.value })
+                    }
                     placeholder="Enter mobile number"
                     required
                   />
@@ -183,13 +227,16 @@ export default function Users() {
 
                 <div className="space-y-2">
                   <Label htmlFor="password">
-                    Password {editingUser && '(Leave empty to keep current password)'}
+                    Password{" "}
+                    {editingUser && "(Leave empty to keep current password)"}
                   </Label>
                   <Input
                     id="password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
                     placeholder="Enter password"
                     required={!editingUser}
                   />
@@ -197,7 +244,12 @@ export default function Users() {
 
                 <div className="space-y-2">
                   <Label htmlFor="role">Role</Label>
-                  <Select value={formData.role} onValueChange={(value: 'admin' | 'user') => setFormData({ ...formData, role: value })}>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value: "admin" | "user") =>
+                      setFormData({ ...formData, role: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select role" />
                     </SelectTrigger>
@@ -209,11 +261,15 @@ export default function Users() {
                 </div>
 
                 <div className="flex justify-end space-x-2">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit">
-                    {editingUser ? 'Update' : 'Create'}
+                    {editingUser ? "Update" : "Create"}
                   </Button>
                 </div>
               </form>
@@ -252,22 +308,30 @@ export default function Users() {
                         <TableCell>
                           <div className="flex items-center">
                             <User className="mr-2 h-4 w-4 text-gray-400" />
-                            <span className="font-medium">{user.fullName || 'Unknown'}</span>
+                            <span className="font-medium">
+                              {user.fullName || "Unknown"}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center">
                             <Phone className="mr-2 h-4 w-4 text-gray-400" />
-                            {user.mobileNumber || 'N/A'}
+                            {user.mobileNumber || "N/A"}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                            {user.role || 'user'}
+                          <Badge
+                            variant={
+                              user.role === "admin" ? "default" : "secondary"
+                            }
+                          >
+                            {user.role || "user"}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+                          {user.createdAt
+                            ? new Date(user.createdAt).toLocaleDateString()
+                            : "Unknown"}
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
