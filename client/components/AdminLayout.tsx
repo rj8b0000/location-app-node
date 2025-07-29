@@ -132,7 +132,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-6 lg:pt-4 min-h-screen bg-gray-50">
+        <main className="p-4 sm:p-6 lg:p-6 lg:pt-6 bg-gray-50">
           {children}
         </main>
       </div>
