@@ -1,0 +1,185 @@
+const API_BASE = '/api';
+
+class ApiError extends Error {
+  constructor(public status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem('token');
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+const handleResponse = async (response: Response) => {
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+    throw new ApiError(response.status, errorData.message || 'Request failed');
+  }
+  return response.json();
+};
+
+export const api = {
+  // Auth
+  async login(mobileNumber: string, password: string) {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mobileNumber, password })
+    });
+    return handleResponse(response);
+  },
+
+  async register(fullName: string, mobileNumber: string, password: string) {
+    const response = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fullName, mobileNumber, password })
+    });
+    return handleResponse(response);
+  },
+
+  // Dashboard
+  async getDashboardStats() {
+    const response = await fetch(`${API_BASE}/dashboard/stats`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  // Users
+  async getUsers() {
+    const response = await fetch(`${API_BASE}/users`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async createUser(userData: any) {
+    const response = await fetch(`${API_BASE}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(userData)
+    });
+    return handleResponse(response);
+  },
+
+  async updateUser(id: string, userData: any) {
+    const response = await fetch(`${API_BASE}/users/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(userData)
+    });
+    return handleResponse(response);
+  },
+
+  async deleteUser(id: string) {
+    const response = await fetch(`${API_BASE}/users/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  // Coordinates
+  async getCoordinates() {
+    const response = await fetch(`${API_BASE}/coordinates`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async createCoordinate(coordinateData: any) {
+    const response = await fetch(`${API_BASE}/coordinates`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(coordinateData)
+    });
+    return handleResponse(response);
+  },
+
+  async updateCoordinate(id: string, coordinateData: any) {
+    const response = await fetch(`${API_BASE}/coordinates/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(coordinateData)
+    });
+    return handleResponse(response);
+  },
+
+  async deleteCoordinate(id: string) {
+    const response = await fetch(`${API_BASE}/coordinates/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  // Sliders
+  async getSliders() {
+    const response = await fetch(`${API_BASE}/admin/sliders`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async createSlider(sliderData: any) {
+    const response = await fetch(`${API_BASE}/sliders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(sliderData)
+    });
+    return handleResponse(response);
+  },
+
+  async updateSlider(id: string, sliderData: any) {
+    const response = await fetch(`${API_BASE}/sliders/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(sliderData)
+    });
+    return handleResponse(response);
+  },
+
+  async deleteSlider(id: string) {
+    const response = await fetch(`${API_BASE}/sliders/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  // Feedback
+  async getFeedbacks() {
+    const response = await fetch(`${API_BASE}/feedbacks`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async deleteFeedback(id: string) {
+    const response = await fetch(`${API_BASE}/feedbacks/${id}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  // Settings
+  async getSettings() {
+    const response = await fetch(`${API_BASE}/settings`, {
+      headers: getAuthHeaders()
+    });
+    return handleResponse(response);
+  },
+
+  async updateSettings(settingsData: any) {
+    const response = await fetch(`${API_BASE}/settings`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+      body: JSON.stringify(settingsData)
+    });
+    return handleResponse(response);
+  }
+};
