@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { api } from '../lib/api';
-import { Image as ImageIcon, Plus, Edit, Trash2, Eye, EyeOff, ExternalLink, FileText } from 'lucide-react';
+import { Image as ImageIcon, Plus, Edit, Trash2, Eye, EyeOff, ExternalLink, FileText, Upload, X } from 'lucide-react';
 import { Alert, AlertDescription } from '../components/ui/alert';
 
 interface Slider {
@@ -45,6 +45,9 @@ export default function Sliders() {
     imageUrl: '',
     order: 0
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
+  const [isUploading, setIsUploading] = useState(false);
   const [sliderError, setSliderError] = useState('');
 
   // Content state
@@ -92,14 +95,48 @@ export default function Sliders() {
   }, []);
 
   // Slider functions
+  const handleFileUpload = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload image');
+    }
+
+    const data = await response.json();
+    return data.imageUrl;
+  };
+
   const handleSliderSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSliderError('');
+    setIsUploading(true);
 
     try {
+      let imageUrl = sliderFormData.imageUrl;
+
+      // If uploading a file, upload it first
+      if (uploadMethod === 'file' && selectedFile) {
+        imageUrl = await handleFileUpload(selectedFile);
+      }
+
+      // Validate that we have an image URL
+      if (!imageUrl) {
+        setSliderError('Please provide an image URL or upload a file');
+        return;
+      }
+
       const sliderData = {
         title: sliderFormData.title || undefined,
-        imageUrl: sliderFormData.imageUrl,
+        imageUrl,
         order: sliderFormData.order
       };
 
@@ -110,12 +147,39 @@ export default function Sliders() {
       }
 
       setIsSliderDialogOpen(false);
-      setEditingSlider(null);
-      setSliderFormData({ title: '', imageUrl: '', order: 0 });
+      resetSliderForm();
       fetchSliders();
     } catch (error: any) {
       setSliderError(error.message || 'Operation failed');
+    } finally {
+      setIsUploading(false);
     }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setSliderError('Please select an image file');
+        return;
+      }
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        setSliderError('File size must be less than 5MB');
+        return;
+      }
+      setSelectedFile(file);
+      setSliderError('');
+      // Clear URL when file is selected
+      setSliderFormData({ ...sliderFormData, imageUrl: '' });
+    }
+  };
+
+  const removeSelectedFile = () => {
+    setSelectedFile(null);
+    const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
   };
 
   const handleSliderEdit = (slider: Slider) => {
@@ -215,6 +279,9 @@ export default function Sliders() {
     setSliderFormData({ title: '', imageUrl: '', order: 0 });
     setEditingSlider(null);
     setSliderError('');
+    setSelectedFile(null);
+    setUploadMethod('url');
+    setIsUploading(false);
   };
 
   const resetContentForm = () => {
@@ -269,7 +336,7 @@ export default function Sliders() {
                         <AlertDescription>{sliderError}</AlertDescription>
                       </Alert>
                     )}
-                    
+
                     <div className="space-y-2">
                       <Label htmlFor="slider-title">Title (Optional)</Label>
                       <Input
@@ -280,17 +347,85 @@ export default function Sliders() {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="slider-imageUrl">Image URL</Label>
-                      <Input
-                        id="slider-imageUrl"
-                        type="url"
-                        value={sliderFormData.imageUrl}
-                        onChange={(e) => setSliderFormData({ ...sliderFormData, imageUrl: e.target.value })}
-                        placeholder="https://example.com/image.jpg"
-                        required
-                      />
+                    <div className="space-y-4">
+                      <Label>Image Source</Label>
+                      <div className="flex space-x-4">
+                        <Button
+                          type="button"
+                          variant={uploadMethod === 'url' ? 'default' : 'outline'}
+                          onClick={() => {
+                            setUploadMethod('url');
+                            setSelectedFile(null);
+                          }}
+                          className="flex-1"
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          URL
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={uploadMethod === 'file' ? 'default' : 'outline'}
+                          onClick={() => {
+                            setUploadMethod('file');
+                            setSliderFormData({ ...sliderFormData, imageUrl: '' });
+                          }}
+                          className="flex-1"
+                        >
+                          <Upload className="mr-2 h-4 w-4" />
+                          Upload File
+                        </Button>
+                      </div>
                     </div>
+
+                    {uploadMethod === 'url' ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="slider-imageUrl">Image URL</Label>
+                        <Input
+                          id="slider-imageUrl"
+                          type="url"
+                          value={sliderFormData.imageUrl}
+                          onChange={(e) => setSliderFormData({ ...sliderFormData, imageUrl: e.target.value })}
+                          placeholder="https://example.com/image.jpg"
+                          required={uploadMethod === 'url'}
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label htmlFor="file-upload">Select Image File</Label>
+                        <div className="space-y-2">
+                          <Input
+                            id="file-upload"
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileSelect}
+                            className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                          />
+                          <p className="text-xs text-gray-500">
+                            Supported formats: JPG, PNG, GIF, WebP (Max 5MB)
+                          </p>
+                          {selectedFile && (
+                            <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                              <div className="flex items-center">
+                                <ImageIcon className="mr-2 h-4 w-4 text-gray-500" />
+                                <span className="text-sm text-gray-700">{selectedFile.name}</span>
+                                <span className="ml-2 text-xs text-gray-500">
+                                  ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                                </span>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={removeSelectedFile}
+                                className="text-red-600 hover:text-red-800"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
                     <div className="space-y-2">
                       <Label htmlFor="slider-order">Display Order</Label>
@@ -304,18 +439,26 @@ export default function Sliders() {
                       />
                     </div>
 
-                    {sliderFormData.imageUrl && (
+                    {(sliderFormData.imageUrl || selectedFile) && (
                       <div className="space-y-2">
                         <Label>Preview</Label>
                         <div className="border rounded-lg overflow-hidden">
-                          <img
-                            src={sliderFormData.imageUrl}
-                            alt="Preview"
-                            className="w-full h-32 object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = 'none';
-                            }}
-                          />
+                          {uploadMethod === 'url' ? (
+                            <img
+                              src={sliderFormData.imageUrl}
+                              alt="Preview"
+                              className="w-full h-32 object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          ) : selectedFile ? (
+                            <img
+                              src={URL.createObjectURL(selectedFile)}
+                              alt="Preview"
+                              className="w-full h-32 object-cover"
+                            />
+                          ) : null}
                         </div>
                       </div>
                     )}
@@ -324,8 +467,15 @@ export default function Sliders() {
                       <Button type="button" variant="outline" onClick={() => setIsSliderDialogOpen(false)}>
                         Cancel
                       </Button>
-                      <Button type="submit">
-                        {editingSlider ? 'Update' : 'Create'}
+                      <Button type="submit" disabled={isUploading || (!sliderFormData.imageUrl && !selectedFile)}>
+                        {isUploading ? (
+                          <>
+                            <Upload className="mr-2 h-4 w-4 animate-spin" />
+                            {uploadMethod === 'file' ? 'Uploading...' : 'Creating...'}
+                          </>
+                        ) : (
+                          <>{editingSlider ? 'Update' : 'Create'}</>
+                        )}
                       </Button>
                     </div>
                   </form>
