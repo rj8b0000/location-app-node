@@ -96,8 +96,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">{user?.fullName}</p>
-                <p className="text-xs text-gray-500">{user?.role}</p>
+                <p className="text-sm font-medium text-gray-700">{user?.fullName || 'Admin User'}</p>
+                <p className="text-xs text-gray-500">{user?.role || 'admin'}</p>
               </div>
             </div>
             <Button
