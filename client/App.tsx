@@ -130,6 +130,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/test"
+              element={
+                <ProtectedRoute>
+                  <Test />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Catch all other routes */}
             <Route path="*" element={<NotFound />} />
