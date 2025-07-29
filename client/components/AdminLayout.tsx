@@ -57,7 +57,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         "lg:transform-none flex flex-col" // Make sidebar a flex container
       )}>
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 flex-shrink-0">
           <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
           <Button
             variant="ghost"
