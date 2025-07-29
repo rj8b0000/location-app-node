@@ -138,7 +138,7 @@ export default function Feedback() {
             <CardTitle>Table View</CardTitle>
           </CardHeader>
           <CardContent>
-            {feedbacks.length > 0 && (
+            {feedbacks && feedbacks.length > 0 && (
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
