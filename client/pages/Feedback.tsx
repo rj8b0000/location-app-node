@@ -88,9 +88,9 @@ export default function Feedback() {
               </div>
             ) : (
               <div className="space-y-4">
-                {feedbacks.map((feedback) => (
+                {feedbacks.map((feedback, index) => (
                   <div
-                    key={feedback._id}
+                    key={feedback._id || `feedback-${index}`}
                     className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-start justify-between">
