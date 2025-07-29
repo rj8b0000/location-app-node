@@ -4,9 +4,24 @@ import { User } from '../models/User';
 export const getUsers: RequestHandler = async (req, res) => {
   try {
     const users = await User.find().select('-password').sort({ createdAt: -1 });
-    console.log('Found users:', users.length);
-    console.log('Users data:', users.map(u => ({ id: u._id, name: u.fullName, mobile: u.mobileNumber, role: u.role })));
-    res.json(users);
+
+    // Filter out invalid users with missing required fields
+    const validUsers = users.filter(user =>
+      user._id &&
+      user.fullName &&
+      user.mobileNumber &&
+      user.role &&
+      typeof user.fullName === 'string' &&
+      typeof user.mobileNumber === 'string' &&
+      typeof user.role === 'string'
+    );
+
+    console.log('Found users:', users.length, 'Valid users:', validUsers.length);
+    if (users.length !== validUsers.length) {
+      console.log('Filtered out invalid users:', users.length - validUsers.length);
+    }
+
+    res.json(validUsers);
   } catch (error) {
     console.error('Get users error:', error);
     res.status(500).json({ message: 'Server error' });
