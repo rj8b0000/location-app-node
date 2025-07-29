@@ -32,9 +32,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!user || user.role !== 'admin') {
-    return <Navigate to="/login" replace />;
-  }
+  // Temporarily bypass authentication for testing
+  // if (!user || user.role !== 'admin') {
+  //   return <Navigate to="/login" replace />;
+  // }
 
   return <>{children}</>;
 };
