@@ -33,10 +33,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Temporarily bypass authentication to view spacing issues
-  // if (!user || user.role !== 'admin') {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!user || user.role !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
 
   return <>{children}</>;
 };
