@@ -16,8 +16,8 @@ import { getDashboardStats } from "./routes/dashboard";
 export function createServer() {
   const app = express();
 
-  // Connect to MongoDB
-  connectDB();
+  // Connect to MongoDB (non-blocking)
+  connectDB().catch(console.error);
 
   // Middleware
   app.use(cors());
