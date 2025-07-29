@@ -34,4 +34,4 @@ const settingsSchema = new Schema<ISettings>({
   timestamps: true
 });
 
-export const Settings = mongoose.model<ISettings>('Settings', settingsSchema);
+export const Settings = mongoose.models.Settings || mongoose.model<ISettings>('Settings', settingsSchema);
