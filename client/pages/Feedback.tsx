@@ -77,7 +77,7 @@ export default function Feedback() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <MessageSquare className="mr-2 h-5 w-5" />
-              User Feedback ({feedbacks.length})
+              User Feedback ({feedbacks?.length || 0})
             </CardTitle>
           </CardHeader>
           <CardContent>
