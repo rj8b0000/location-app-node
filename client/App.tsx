@@ -32,10 +32,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Temporarily bypass authentication to show new content management feature
-  // if (!user || user.role !== 'admin') {
-  //   return <Navigate to="/login" replace />;
-  // }
+  if (!user || user.role !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
 
   return <>{children}</>;
 };
