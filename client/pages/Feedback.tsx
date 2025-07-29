@@ -151,7 +151,7 @@ export default function Feedback() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {feedbacks.map((feedback, index) => (
+                    {(feedbacks || []).map((feedback, index) => (
                       <TableRow key={feedback._id || `table-feedback-${index}`}>
                         <TableCell className="font-medium">
                           {feedback.userName}
