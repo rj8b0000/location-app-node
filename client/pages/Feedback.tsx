@@ -96,16 +96,16 @@ export default function Feedback() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
-                          <User key="user-icon" className="h-4 w-4 text-gray-400" />
-                          <span key="user-name" className="font-medium text-gray-900">
+                          <User key={`${feedback._id}-user-icon`} className="h-4 w-4 text-gray-400" />
+                          <span key={`${feedback._id}-user-name`} className="font-medium text-gray-900">
                             {feedback.userName}
                           </span>
                           {feedback.userId && (
-                            <span key="user-mobile" className="text-sm text-gray-500">
+                            <span key={`${feedback._id}-user-mobile`} className="text-sm text-gray-500">
                               ({feedback.userId.mobileNumber})
                             </span>
                           )}
-                          <div key="date-info" className="flex items-center text-xs text-gray-500">
+                          <div key={`${feedback._id}-date-info`} className="flex items-center text-xs text-gray-500">
                             <Calendar className="mr-1 h-3 w-3" />
                             {new Date(feedback.createdAt).toLocaleString()}
                           </div>
