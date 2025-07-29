@@ -3,6 +3,7 @@ import { User } from '../models/User';
 import { Coordinate } from '../models/Coordinate';
 import { Slider } from '../models/Slider';
 import { Feedback } from '../models/Feedback';
+import { Content } from '../models/Content';
 
 export const getDashboardStats: RequestHandler = async (req, res) => {
   try {
