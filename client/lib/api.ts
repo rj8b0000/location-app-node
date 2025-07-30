@@ -20,18 +20,45 @@ const getAuthHeaders = () => {
 };
 
 const handleResponse = async (response: Response) => {
+  console.log("Response status:", response.status, response.statusText);
+  console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+
   if (!response.ok) {
-    const errorData = await response
-      .json()
-      .catch(() => ({ message: "Network error" }));
-    throw new ApiError(response.status, errorData.message || "Request failed");
+    let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch (jsonError) {
+      console.error("Failed to parse error response as JSON:", jsonError);
+      try {
+        const textResponse = await response.text();
+        console.error("Error response text:", textResponse);
+        if (textResponse) {
+          errorMessage = textResponse;
+        }
+      } catch (textError) {
+        console.error("Failed to read error response as text:", textError);
+        errorMessage = `Network error - ${response.status} ${response.statusText}`;
+      }
+    }
+
+    throw new ApiError(response.status, errorMessage);
   }
 
   try {
-    return await response.json();
+    const data = await response.json();
+    console.log("Successful response data:", data);
+    return data;
   } catch (error) {
-    console.error("JSON parsing error:", error);
-    throw new ApiError(500, "Invalid response format");
+    console.error("JSON parsing error for successful response:", error);
+    try {
+      const textResponse = await response.text();
+      console.error("Response text:", textResponse);
+      throw new ApiError(500, `Invalid JSON response: ${textResponse}`);
+    } catch (textError) {
+      throw new ApiError(500, "Invalid response format - could not parse JSON or text");
+    }
   }
 };
 
