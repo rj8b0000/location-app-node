@@ -39,21 +39,29 @@ export const getUsers: RequestHandler = async (req, res) => {
 
 export const createUser: RequestHandler = async (req, res) => {
   try {
+    console.log("Create user request received");
+    console.log("Request body:", req.body);
+    console.log("User making request:", req.user?.fullName);
+
     const { fullName, mobileNumber, password, role } = req.body;
 
     if (!fullName || !mobileNumber || !password) {
+      console.log("Missing required fields:", { fullName: !!fullName, mobileNumber: !!mobileNumber, password: !!password });
       return res
         .status(400)
         .json({ message: "Please provide all required fields" });
     }
 
+    console.log("Checking for existing user with mobile number:", mobileNumber);
     const existingUser = await User.findOne({ mobileNumber });
     if (existingUser) {
+      console.log("User already exists");
       return res
         .status(400)
         .json({ message: "User already exists with this mobile number" });
     }
 
+    console.log("Creating new user...");
     const user = new User({
       fullName,
       mobileNumber,
@@ -62,8 +70,10 @@ export const createUser: RequestHandler = async (req, res) => {
     });
 
     await user.save();
+    console.log("User saved successfully:", user._id);
 
     const userResponse = await User.findById(user._id).select("-password");
+    console.log("Sending user response");
     res.status(201).json(userResponse);
   } catch (error) {
     console.error("Create user error:", error);
