@@ -94,6 +94,16 @@ export default function Users() {
     e.preventDefault();
     setError("");
 
+    // Check if user is authenticated
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Authentication token missing. Please log in again.");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+      return;
+    }
+
     try {
       const userData = {
         fullName: formData.fullName,
@@ -101,6 +111,8 @@ export default function Users() {
         role: formData.role,
         ...(formData.password && { password: formData.password }),
       };
+
+      console.log("Submitting user data:", userData);
 
       if (editingUser) {
         await api.updateUser(editingUser._id, userData);
@@ -122,7 +134,17 @@ export default function Users() {
       });
       fetchUsers();
     } catch (error: any) {
-      setError(error.message || "Operation failed");
+      console.error("User operation error:", error);
+      if (error.message?.includes("401") || error.message?.includes("authorization")) {
+        setError("Authentication failed. Please log in again.");
+        setTimeout(() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          window.location.href = "/login";
+        }, 2000);
+      } else {
+        setError(error.message || "Operation failed");
+      }
     }
   };
 
