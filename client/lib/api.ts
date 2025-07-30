@@ -12,6 +12,10 @@ class ApiError extends Error {
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
+  console.log("Getting auth headers, token exists:", !!token);
+  if (token) {
+    console.log("Token preview:", token.substring(0, 20) + "...");
+  }
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
