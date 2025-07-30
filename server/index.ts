@@ -67,6 +67,14 @@ export function createServer() {
     res.json({ message: "Server is running!" });
   });
 
+  // Test endpoint for debugging
+  app.post("/api/test", (req, res) => {
+    console.log("Test POST endpoint hit");
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+    res.json({ message: "Test endpoint working", body: req.body });
+  });
+
   // Auth routes
   app.post("/api/auth/register", register);
   app.post("/api/auth/login", login);
