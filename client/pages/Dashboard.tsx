@@ -57,12 +57,12 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchStats = async (retryCount = 0) => {
       try {
         // Test basic connectivity first
         console.log("Testing API connectivity...");
-        const pingResponse = await fetch("/api/ping");
-        console.log("Ping response:", pingResponse.status);
+        await api.ping();
+        console.log("API ping successful");
 
         console.log("Attempting to fetch dashboard stats...");
         const response = await api.getDashboardStats();
@@ -71,10 +71,17 @@ export default function Dashboard() {
       } catch (error) {
         console.error("Failed to fetch dashboard stats:", error);
 
-        // Check if user is logged in
-        const token = localStorage.getItem("token");
-        if (!token) {
-          console.error("No auth token found, redirecting to login");
+        // Retry once if it's the first failure and not an auth issue
+        if (retryCount < 1 && error instanceof Error && !error.message.includes("401")) {
+          console.log("Retrying after 1 second...");
+          setTimeout(() => fetchStats(retryCount + 1), 1000);
+          return;
+        }
+
+        // Check if it's an authentication error
+        if (error instanceof Error && (error.message.includes("401") || error.message.includes("Unauthorized"))) {
+          console.error("Authentication error, redirecting to login");
+          localStorage.removeItem("token");
           window.location.href = "/login";
           return;
         }
