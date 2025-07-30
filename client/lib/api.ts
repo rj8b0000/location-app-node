@@ -53,10 +53,22 @@ export const api = {
 
   // Dashboard
   async getDashboardStats() {
-    const response = await fetch(`${API_BASE}/dashboard/stats`, {
-      headers: getAuthHeaders(),
-    });
-    return handleResponse(response);
+    try {
+      console.log("Making request to:", `${API_BASE}/dashboard/stats`);
+      console.log("Auth headers:", getAuthHeaders());
+
+      const response = await fetch(`${API_BASE}/dashboard/stats`, {
+        headers: getAuthHeaders(),
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+
+      return handleResponse(response);
+    } catch (error) {
+      console.error("API request failed:", error);
+      throw error;
+    }
   },
 
   // Users
