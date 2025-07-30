@@ -32,6 +32,12 @@ const handleResponse = async (response: Response) => {
 };
 
 export const api = {
+  // Health check
+  async ping() {
+    const response = await fetch(`${API_BASE}/ping`);
+    return handleResponse(response);
+  },
+
   // Auth
   async login(mobileNumber: string, password: string) {
     const response = await fetch(`${API_BASE}/auth/login`, {
