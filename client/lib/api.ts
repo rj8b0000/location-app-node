@@ -23,6 +23,9 @@ const handleResponse = async (response: Response) => {
   console.log("Response status:", response.status, response.statusText);
   console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
+  // Clone the response so we can read it multiple times if needed
+  const responseClone = response.clone();
+
   if (!response.ok) {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
 
@@ -32,7 +35,7 @@ const handleResponse = async (response: Response) => {
     } catch (jsonError) {
       console.error("Failed to parse error response as JSON:", jsonError);
       try {
-        const textResponse = await response.text();
+        const textResponse = await responseClone.text();
         console.error("Error response text:", textResponse);
         if (textResponse) {
           errorMessage = textResponse;
@@ -53,7 +56,7 @@ const handleResponse = async (response: Response) => {
   } catch (error) {
     console.error("JSON parsing error for successful response:", error);
     try {
-      const textResponse = await response.text();
+      const textResponse = await responseClone.text();
       console.error("Response text:", textResponse);
       throw new ApiError(500, `Invalid JSON response: ${textResponse}`);
     } catch (textError) {
