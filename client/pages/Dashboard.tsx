@@ -59,12 +59,26 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        // Test basic connectivity first
+        console.log("Testing API connectivity...");
+        const pingResponse = await fetch("/api/ping");
+        console.log("Ping response:", pingResponse.status);
+
         console.log("Attempting to fetch dashboard stats...");
         const response = await api.getDashboardStats();
         console.log("Dashboard stats response:", response);
         setStats(response);
       } catch (error) {
         console.error("Failed to fetch dashboard stats:", error);
+
+        // Check if user is logged in
+        const token = localStorage.getItem("token");
+        if (!token) {
+          console.error("No auth token found, redirecting to login");
+          window.location.href = "/login";
+          return;
+        }
+
         // Set some default values to prevent UI issues
         setStats({
           totalUsers: 0,
