@@ -21,7 +21,10 @@ const getAuthHeaders = () => {
 
 const handleResponse = async (response: Response) => {
   console.log("Response status:", response.status, response.statusText);
-  console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+  console.log(
+    "Response headers:",
+    Object.fromEntries(response.headers.entries()),
+  );
 
   // Clone the response so we can read it multiple times if needed
   const responseClone = response.clone();
@@ -60,7 +63,10 @@ const handleResponse = async (response: Response) => {
       console.error("Response text:", textResponse);
       throw new ApiError(500, `Invalid JSON response: ${textResponse}`);
     } catch (textError) {
-      throw new ApiError(500, "Invalid response format - could not parse JSON or text");
+      throw new ApiError(
+        500,
+        "Invalid response format - could not parse JSON or text",
+      );
     }
   }
 };
@@ -122,7 +128,10 @@ export const api = {
   async createUser(userData: any) {
     try {
       console.log("Creating user with data:", userData);
-      const headers = { "Content-Type": "application/json", ...getAuthHeaders() };
+      const headers = {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+      };
       console.log("Request headers:", headers);
 
       const response = await fetch(`${API_BASE}/users`, {

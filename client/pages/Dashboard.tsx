@@ -72,14 +72,22 @@ export default function Dashboard() {
         console.error("Failed to fetch dashboard stats:", error);
 
         // Retry once if it's the first failure and not an auth issue
-        if (retryCount < 1 && error instanceof Error && !error.message.includes("401")) {
+        if (
+          retryCount < 1 &&
+          error instanceof Error &&
+          !error.message.includes("401")
+        ) {
           console.log("Retrying after 1 second...");
           setTimeout(() => fetchStats(retryCount + 1), 1000);
           return;
         }
 
         // Check if it's an authentication error
-        if (error instanceof Error && (error.message.includes("401") || error.message.includes("Unauthorized"))) {
+        if (
+          error instanceof Error &&
+          (error.message.includes("401") ||
+            error.message.includes("Unauthorized"))
+        ) {
           console.error("Authentication error, redirecting to login");
           localStorage.removeItem("token");
           window.location.href = "/login";

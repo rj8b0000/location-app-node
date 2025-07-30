@@ -46,7 +46,11 @@ export const createUser: RequestHandler = async (req, res) => {
     const { fullName, mobileNumber, password, role } = req.body;
 
     if (!fullName || !mobileNumber || !password) {
-      console.log("Missing required fields:", { fullName: !!fullName, mobileNumber: !!mobileNumber, password: !!password });
+      console.log("Missing required fields:", {
+        fullName: !!fullName,
+        mobileNumber: !!mobileNumber,
+        password: !!password,
+      });
       return res
         .status(400)
         .json({ message: "Please provide all required fields" });

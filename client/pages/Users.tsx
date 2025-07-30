@@ -89,7 +89,10 @@ export default function Users() {
       setUsers(validUsers);
     } catch (error: any) {
       console.error("Failed to fetch users:", error);
-      if (error.message?.includes("401") || error.message?.includes("authorization")) {
+      if (
+        error.message?.includes("401") ||
+        error.message?.includes("authorization")
+      ) {
         console.log("Authentication error, redirecting to login");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -149,7 +152,10 @@ export default function Users() {
       fetchUsers();
     } catch (error: any) {
       console.error("User operation error:", error);
-      if (error.message?.includes("401") || error.message?.includes("authorization")) {
+      if (
+        error.message?.includes("401") ||
+        error.message?.includes("authorization")
+      ) {
         setError("Authentication failed. Please log in again.");
         setTimeout(() => {
           localStorage.removeItem("token");
