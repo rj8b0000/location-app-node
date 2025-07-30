@@ -59,10 +59,19 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        console.log("Attempting to fetch dashboard stats...");
         const response = await api.getDashboardStats();
+        console.log("Dashboard stats response:", response);
         setStats(response);
       } catch (error) {
         console.error("Failed to fetch dashboard stats:", error);
+        // Set some default values to prevent UI issues
+        setStats({
+          totalUsers: 0,
+          totalCoordinates: 0,
+          totalSliders: 0,
+          totalFeedbacks: 0,
+        });
       } finally {
         setIsLoading(false);
       }
