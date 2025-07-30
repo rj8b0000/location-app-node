@@ -90,12 +90,23 @@ export const api = {
   },
 
   async createUser(userData: any) {
-    const response = await fetch(`${API_BASE}/users`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", ...getAuthHeaders() },
-      body: JSON.stringify(userData),
-    });
-    return handleResponse(response);
+    try {
+      console.log("Creating user with data:", userData);
+      const headers = { "Content-Type": "application/json", ...getAuthHeaders() };
+      console.log("Request headers:", headers);
+
+      const response = await fetch(`${API_BASE}/users`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(userData),
+      });
+
+      console.log("Create user response status:", response.status);
+      return handleResponse(response);
+    } catch (error) {
+      console.error("Create user error:", error);
+      throw error;
+    }
   },
 
   async updateUser(id: string, userData: any) {
