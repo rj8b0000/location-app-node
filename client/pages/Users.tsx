@@ -67,6 +67,14 @@ export default function Users() {
 
   const fetchUsers = async () => {
     try {
+      // Check authentication before making API call
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.log("No auth token found, redirecting to login");
+        window.location.href = "/login";
+        return;
+      }
+
       const data = await api.getUsers();
       // Filter out any invalid user objects
       const validUsers = data.filter(
@@ -79,8 +87,14 @@ export default function Users() {
           user.createdAt,
       );
       setUsers(validUsers);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to fetch users:", error);
+      if (error.message?.includes("401") || error.message?.includes("authorization")) {
+        console.log("Authentication error, redirecting to login");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.href = "/login";
+      }
     } finally {
       setIsLoading(false);
     }
