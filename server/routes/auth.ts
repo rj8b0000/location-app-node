@@ -78,6 +78,44 @@ export const login: RequestHandler = async (req, res) => {
   }
 };
 
+export const createAdmin: RequestHandler = async (req, res) => {
+  try {
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ mobileNumber: "123456789" });
+    if (existingAdmin) {
+      return res
+        .status(400)
+        .json({ message: "Admin user already exists" });
+    }
+
+    // Create admin user with specified credentials
+    const adminUser = new User({
+      fullName: "Admin User",
+      mobileNumber: "123456789",
+      password: "admin@123",
+      role: "admin"
+    });
+
+    await adminUser.save();
+
+    const token = generateToken(adminUser._id as string);
+
+    res.status(201).json({
+      message: "Admin user created successfully",
+      token,
+      user: {
+        id: adminUser._id,
+        fullName: adminUser.fullName,
+        mobileNumber: adminUser.mobileNumber,
+        role: adminUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("Create admin error:", error);
+    res.status(500).json({ message: "Server error during admin creation" });
+  }
+};
+
 export const getProfile: RequestHandler = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");

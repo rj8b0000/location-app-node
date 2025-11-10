@@ -5,7 +5,7 @@ import { connectDB } from "./config/database";
 import { authenticate, requireAdmin } from "./middleware/auth";
 
 // Route imports
-import { register, login, getProfile } from "./routes/auth";
+import { register, login, getProfile, createAdmin } from "./routes/auth";
 import {
   getCoordinates,
   createCoordinate,
@@ -87,6 +87,7 @@ export function createServer() {
   app.post("/api/auth/register", register);
   app.post("/api/auth/login", login);
   app.get("/api/auth/profile", authenticate, getProfile);
+  app.post("/api/auth/create-admin", createAdmin);
 
   // Dashboard routes
   app.get(
