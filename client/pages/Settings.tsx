@@ -29,9 +29,11 @@ interface Settings {
     reports: boolean;
     feedback: boolean;
     help: boolean;
+    ytvideo: boolean;
   };
   sliderAutoScrollInterval: number;
   statisticsLink?: string;
+  ytvideoLink?: string;
 }
 
 export default function Settings() {
@@ -108,6 +110,15 @@ export default function Settings() {
     setSettings({
       ...settings,
       statisticsLink: value,
+    });
+  };
+
+  const updateYtVideoLink = (value: string) => {
+    if (!settings) return;
+
+    setSettings({
+      ...settings,
+      ytvideoLink: value,
     });
   };
 
@@ -265,6 +276,35 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* YtVideo Link Settings */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <LinkIcon className="mr-2 h-5 w-5" />
+              Youtube Video Link
+            </CardTitle>
+            <p className="text-sm text-gray-600">
+              URL that will be opened when users access the youtube section
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="ytVideoLink">Youtube Video URL</Label>
+              <Input
+                id="ytVideoLink"
+                type="url"
+                value={settings.ytvideoLink || ""}
+                onChange={(e) => updateYtVideoLink(e.target.value)}
+                placeholder="https://example.com/statistics"
+              />
+              <p className="text-xs text-gray-500">
+                Leave empty to disable the statistics section. This link will
+                open in the app's browser or WebView.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* System Information */}
         <Card>
           <CardHeader>
@@ -306,6 +346,16 @@ export default function Settings() {
                     }
                   >
                     {settings.statisticsLink ? "Configured" : "Not set"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Youtube Video Link:</span>
+                  <span
+                    className={
+                      settings.ytvideoLink ? "text-green-600" : "text-gray-400"
+                    }
+                  >
+                    {settings.ytvideoLink ? "Configured" : "Not set"}
                   </span>
                 </div>
               </div>

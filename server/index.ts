@@ -29,6 +29,14 @@ import {
   getSettings,
   updateSettings,
   getStatisticsLink,
+  getYtVideoLink,
+  uploadSplashImage,
+  getSplashImage,
+  getLocalSplashImage,
+  updateSplashImage,
+  uploadSplashImageFromLocal,
+  updateSplashImageFromLocal,
+  deleteSplashImage,
 } from "./routes/settings";
 import { getUsers, createUser, updateUser, deleteUser } from "./routes/users";
 import { getDashboardStats } from "./routes/dashboard";
@@ -95,7 +103,7 @@ export function createServer() {
   app.delete("/api/users/:id", authenticate, requireAdmin, deleteUser);
 
   // Coordinate routes
-  app.get("/api/coordinates", authenticate, requireAdmin, getCoordinates);
+  app.get("/api/coordinates", getCoordinates);
   app.post("/api/coordinates", authenticate, requireAdmin, createCoordinate);
   app.put("/api/coordinates/:id", authenticate, requireAdmin, updateCoordinate);
   app.delete(
@@ -115,13 +123,25 @@ export function createServer() {
 
   // Feedback routes
   app.get("/api/feedbacks", authenticate, requireAdmin, getFeedbacks);
-  app.post("/api/feedback", authenticate, createFeedback);
+  app.post("/api/feedback", createFeedback);
   app.delete("/api/feedbacks/:id", authenticate, requireAdmin, deleteFeedback);
 
   // Settings routes
-  app.get("/api/settings", authenticate, requireAdmin, getSettings);
+  app.get("/api/settings", getSettings);
   app.put("/api/settings", authenticate, requireAdmin, updateSettings);
   app.get("/api/statistics-link", getStatisticsLink); // Public endpoint for app
+  app.get("/api/ytvideo-link", getYtVideoLink); // Public endpoint for app
+  
+  // Splash image routes - URL based
+  app.post("/api/splash-image", authenticate, requireAdmin, uploadSplashImage);
+  app.get("/api/splash-image", getSplashImage); // Public endpoint for app
+  app.get("/api/splash-image/local", getLocalSplashImage); // Public endpoint for local splash images
+  app.put("/api/splash-image", authenticate, requireAdmin, updateSplashImage);
+  
+  // Splash image routes - File upload based
+  app.post("/api/splash-image/upload", authenticate, requireAdmin, uploadSplashImageFromLocal);
+  app.put("/api/splash-image/upload", authenticate, requireAdmin, updateSplashImageFromLocal);
+  app.delete("/api/splash-image", authenticate, requireAdmin, deleteSplashImage);
 
   // Content routes
   app.get("/api/contents", getActiveContents); // Public endpoint for app

@@ -13,7 +13,7 @@ export const getContents: RequestHandler = async (req, res) => {
 
 export const getActiveContents: RequestHandler = async (req, res) => {
   try {
-    const contents = await Content.find({ isActive: true }).sort({
+    const contents = await Content.findOne({ isActive: true }).sort({
       order: 1,
       createdAt: -1,
     });

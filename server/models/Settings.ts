@@ -4,12 +4,15 @@ export interface ISettings extends Document {
   modulesVisibility: {
     sliders: boolean;
     statistics: boolean;
+    ytvideo: boolean;
     reports: boolean;
     feedback: boolean;
     help: boolean;
   };
   sliderAutoScrollInterval: number; // in milliseconds
   statisticsLink?: string;
+  ytvideoLink?: string;
+  splashImageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,6 +22,7 @@ const settingsSchema = new Schema<ISettings>(
     modulesVisibility: {
       sliders: { type: Boolean, default: true },
       statistics: { type: Boolean, default: true },
+      ytvideo: { type: Boolean, default: true },
       reports: { type: Boolean, default: true },
       feedback: { type: Boolean, default: true },
       help: { type: Boolean, default: true },
@@ -28,6 +32,14 @@ const settingsSchema = new Schema<ISettings>(
       default: 5000, // 5 seconds
     },
     statisticsLink: {
+      type: String,
+      trim: true,
+    },
+    ytvideoLink: {
+      type: String,
+      trim: true,
+    },
+    splashImageUrl: {
       type: String,
       trim: true,
     },
