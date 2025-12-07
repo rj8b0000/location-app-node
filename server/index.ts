@@ -124,7 +124,7 @@ export function createServer() {
 
   // Feedback routes
   app.get("/api/feedbacks", authenticate, requireAdmin, getFeedbacks);
-  app.post("/api/feedback", createFeedback);
+  app.post("/api/feedback", authenticate, createFeedback);
   app.delete("/api/feedbacks/:id", authenticate, requireAdmin, deleteFeedback);
 
   // Settings routes

@@ -17,25 +17,28 @@ export const createFeedback: RequestHandler = async (req, res) => {
   try {
     const { userName, message } = req.body;
 
-    if (!userName || !message) {
+    if (!userName?.trim() || !message?.trim()) {
       return res
         .status(400)
         .json({ message: "User name and message are required" });
     }
 
-    const feedback = new Feedback({
-      userName,
-      message,
+    const feedback = await Feedback.create({
+      userName: userName.trim(),
+      message: message.trim(),
       userId: req.user?.id,
     });
+    console.log("Feedback Object: ", feedback);
+    // Populate user data
+    await feedback.populate("userId");
 
-    await feedback.save();
     res.status(201).json(feedback);
   } catch (error) {
     console.error("Create feedback error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 export const deleteFeedback: RequestHandler = async (req, res) => {
   try {
