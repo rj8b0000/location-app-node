@@ -119,17 +119,59 @@ export const updateUser: RequestHandler = async (req, res) => {
 
 export const deleteUser: RequestHandler = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const user = await User.findByIdAndDelete(id);
-
+    const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     res.json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Delete user error:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const deleteUserByPhoneNumber: RequestHandler = async (req, res) => {
+  try {
+    const { mobileNumber, password } = req.body;
+
+    if (!mobileNumber || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Mobile number and password are required",
+      });
+    }
+
+    // Find user by mobile number
+    const user = await User.findOne({ mobileNumber });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found with this mobile number",
+      });
+    }
+
+    // Verify password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect password",
+      });
+    }
+
+    // If password is correct, delete the user
+    await User.findByIdAndDelete(user._id);
+
+    res.json({
+      success: true,
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    console.error("Delete user by phone error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while deleting account",
+    });
   }
 };

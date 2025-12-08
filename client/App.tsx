@@ -16,6 +16,7 @@ import Coordinates from "./pages/Coordinates";
 import Sliders from "./pages/Sliders";
 import Feedback from "./pages/Feedback";
 import Settings from "./pages/Settings";
+import DeleteAccount from "./pages/DeleteAccount";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,6 +76,14 @@ const App = () => (
               element={
                 <PublicRoute>
                   <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/delete-account"
+              element={
+                <PublicRoute>
+                  <DeleteAccount />
                 </PublicRoute>
               }
             />
