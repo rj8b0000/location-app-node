@@ -8,6 +8,7 @@ export interface ISettings extends Document {
     reports: boolean;
     feedback: boolean;
     help: boolean;
+    location_screen: boolean;
   };
   sliderAutoScrollInterval: number; // in milliseconds
   statisticsLink?: string;
@@ -26,6 +27,7 @@ const settingsSchema = new Schema<ISettings>(
       reports: { type: Boolean, default: true },
       feedback: { type: Boolean, default: true },
       help: { type: Boolean, default: true },
+      location_screen: { type: Boolean, default: true },
     },
     sliderAutoScrollInterval: {
       type: Number,

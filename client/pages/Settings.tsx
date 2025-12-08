@@ -25,6 +25,7 @@ interface Settings {
   _id: string;
   modulesVisibility: {
     sliders: boolean;
+    location_screen: boolean;
     statistics: boolean;
     reports: boolean;
     feedback: boolean;
