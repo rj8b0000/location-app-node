@@ -53,7 +53,9 @@ const validatePolygon = (polygon: any): boolean => {
 
 export const getCoordinates: RequestHandler = async (req, res) => {
   try {
-    const coordinates = await Coordinate.find().sort({ createdAt: -1 });
+    const coordinates = await Coordinate.find({ isActive: true }).sort({
+      createdAt: -1,
+    });
     res.json(coordinates);
   } catch (error) {
     console.error("Get coordinates error:", error);
