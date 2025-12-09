@@ -85,14 +85,36 @@ export const createCoordinate: RequestHandler = async (req, res) => {
       coordinates: ensurePolygonClosed(polygon.coordinates),
     };
 
-    const coordinate = new Coordinate({
-      name,
-      description,
-      polygon: closedPolygon,
-    });
+    // Start a session for transaction
+    const session = await Coordinate.startSession();
+    session.startTransaction();
 
-    await coordinate.save();
-    res.status(201).json(coordinate);
+    try {
+      // Set all existing coordinates to isActive: false
+      await Coordinate.updateMany(
+        { isActive: true },
+        { $set: { isActive: false } },
+        { session },
+      );
+
+      // Create new active coordinate
+      const coordinate = new Coordinate({
+        name,
+        description,
+        polygon: closedPolygon,
+        isActive: true,
+      });
+
+      await coordinate.save({ session });
+      await session.commitTransaction();
+
+      res.status(201).json(coordinate);
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
   } catch (error) {
     console.error("Create coordinate error:", error);
     res.status(500).json({ message: "Server error" });
