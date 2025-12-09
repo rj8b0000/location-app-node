@@ -116,7 +116,7 @@ export const createCoordinate: RequestHandler = async (req, res) => {
       session.endSession();
     }
   } catch (error) {
-    console.error("Create coordinate error:", error);
+    console.log("Create coordinate error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
