@@ -1,18 +1,21 @@
 import { RequestHandler } from "express";
 import { Coordinate } from "../models/Coordinate";
+import { Types } from "mongoose";
 
-// Helper function to ensure polygon is closed (first and last coordinates are the same)
+// Helper function to ensure polygon is properly closed
 const ensurePolygonClosed = (coordinates: number[][][]): number[][][] => {
   return coordinates.map((ring) => {
-    if (ring.length === 0) return ring;
+    if (ring.length < 3) {
+      throw new Error("A polygon ring must have at least 3 coordinates");
+    }
 
-    const firstPoint = ring[0];
-    const lastPoint = ring[ring.length - 1];
+    // Check if first and last coordinates are the same
+    const first = ring[0];
+    const last = ring[ring.length - 1];
 
-    // Check if first and last points are the same
-    if (firstPoint[0] !== lastPoint[0] || firstPoint[1] !== lastPoint[1]) {
-      // Add the first point to the end to close the polygon
-      return [...ring, firstPoint];
+    // If not the same, add the first coordinate to the end to close the polygon
+    if (first[0] !== last[0] || first[1] !== last[1]) {
+      return [...ring, [first[0], first[1]]];
     }
 
     return ring;
@@ -53,9 +56,10 @@ const validatePolygon = (polygon: any): boolean => {
 
 export const getCoordinates: RequestHandler = async (req, res) => {
   try {
-    const coordinates = await Coordinate.find({ isActive: true }).sort({
-      createdAt: -1,
-    });
+    const coordinates = await Coordinate.find({ isActive: true })
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
     res.json(coordinates);
   } catch (error) {
     console.error("Get coordinates error:", error);
@@ -64,32 +68,33 @@ export const getCoordinates: RequestHandler = async (req, res) => {
 };
 
 export const createCoordinate: RequestHandler = async (req, res) => {
+  const session = await Coordinate.startSession();
+  session.startTransaction();
+
   try {
     const { name, description, polygon } = req.body;
 
     if (!name || !polygon) {
+      await session.abortTransaction();
       return res.status(400).json({ message: "Name and polygon are required" });
     }
 
-    // Validate polygon structure
-    if (!validatePolygon(polygon)) {
-      return res.status(400).json({
-        message:
-          "Invalid polygon format. Must be a valid GeoJSON Polygon with proper coordinate structure.",
-      });
-    }
-
-    // Ensure polygon is closed (first and last coordinates are the same)
-    const closedPolygon = {
-      ...polygon,
-      coordinates: ensurePolygonClosed(polygon.coordinates),
-    };
-
-    // Start a session for transaction
-    const session = await Coordinate.startSession();
-    session.startTransaction();
-
     try {
+      // Ensure polygon is closed (first and last coordinates are the same)
+      const closedPolygon = {
+        ...polygon,
+        coordinates: ensurePolygonClosed(polygon.coordinates),
+      };
+
+      // Validate polygon structure
+      if (!validatePolygon(closedPolygon)) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message:
+            "Invalid polygon format. Must be a valid GeoJSON Polygon with proper coordinate structure.",
+        });
+      }
+
       // Set all existing coordinates to isActive: false
       await Coordinate.updateMany(
         { isActive: true },
@@ -112,65 +117,120 @@ export const createCoordinate: RequestHandler = async (req, res) => {
     } catch (error) {
       await session.abortTransaction();
       throw error;
-    } finally {
-      session.endSession();
     }
   } catch (error) {
-    console.log("Create coordinate error:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Create coordinate error:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    res.status(500).json({
+      message: "Failed to create coordinate",
+      error: errorMessage,
+    });
+  } finally {
+    await session.endSession();
   }
 };
 
 export const updateCoordinate: RequestHandler = async (req, res) => {
+  const session = await Coordinate.startSession();
+  session.startTransaction();
+
   try {
     const { id } = req.params;
     const updates = req.body;
 
     // If polygon is being updated, validate and ensure it's closed
     if (updates.polygon) {
-      if (!validatePolygon(updates.polygon)) {
+      try {
+        updates.polygon = {
+          ...updates.polygon,
+          coordinates: ensurePolygonClosed(updates.polygon.coordinates),
+        };
+
+        if (!validatePolygon(updates.polygon)) {
+          await session.abortTransaction();
+          return res.status(400).json({
+            message:
+              "Invalid polygon format. Must be a valid GeoJSON Polygon with proper coordinate structure.",
+          });
+        }
+      } catch (error) {
+        await session.abortTransaction();
         return res.status(400).json({
           message:
-            "Invalid polygon format. Must be a valid GeoJSON Polygon with proper coordinate structure.",
+            error instanceof Error ? error.message : "Invalid polygon format",
         });
       }
-
-      // Ensure polygon is closed
-      updates.polygon = {
-        ...updates.polygon,
-        coordinates: ensurePolygonClosed(updates.polygon.coordinates),
-      };
     }
 
-    const coordinate = await Coordinate.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
+    const coordinate = await Coordinate.findByIdAndUpdate(
+      id,
+      { ...updates, updatedAt: new Date() },
+      { new: true, session },
+    ).exec();
 
     if (!coordinate) {
+      await session.abortTransaction();
       return res.status(404).json({ message: "Coordinate not found" });
     }
 
+    await session.commitTransaction();
     res.json(coordinate);
   } catch (error) {
+    await session.abortTransaction();
     console.error("Update coordinate error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to update coordinate",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  } finally {
+    await session.endSession();
   }
 };
 
 export const deleteCoordinate: RequestHandler = async (req, res) => {
+  const session = await Coordinate.startSession();
+  session.startTransaction();
+
   try {
     const { id } = req.params;
 
-    const coordinate = await Coordinate.findByIdAndDelete(id);
+    // First find the coordinate to check if it's active
+    const coordinate = await Coordinate.findById(id).session(session);
 
     if (!coordinate) {
+      await session.abortTransaction();
       return res.status(404).json({ message: "Coordinate not found" });
     }
 
+    const wasActive = coordinate.isActive;
+
+    // Delete the coordinate
+    await Coordinate.deleteOne({ _id: id }).session(session);
+
+    // If the deleted coordinate was active, make the most recent one active
+    if (wasActive) {
+      const mostRecent = await Coordinate.findOne()
+        .sort({ createdAt: -1 })
+        .session(session);
+
+      if (mostRecent) {
+        mostRecent.isActive = true;
+        await mostRecent.save({ session });
+      }
+    }
+
+    await session.commitTransaction();
     res.json({ message: "Coordinate deleted successfully" });
   } catch (error) {
+    await session.abortTransaction();
     console.error("Delete coordinate error:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({
+      message: "Failed to delete coordinate",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  } finally {
+    await session.endSession();
   }
 };
 
